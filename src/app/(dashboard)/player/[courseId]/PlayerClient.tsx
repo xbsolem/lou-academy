@@ -62,6 +62,21 @@ export default function PlayerClient({
       ...(pct >= 100 ? { completed_at: new Date().toISOString() } : {}),
     }, { onConflict: "user_id,course_id" });
 
+    if (pct >= 100) {
+      const certNumber = `LOU-${course.id.substring(0, 8).toUpperCase()}-${user.id.substring(0, 6).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+      await supabase.from("certificates").upsert({
+        user_id: user.id,
+        course_id: course.id,
+        certificate_number: certNumber,
+      }, { onConflict: "user_id,course_id" });
+
+      await supabase.from("activity_events").insert({
+        user_id: user.id,
+        course_id: course.id,
+        event_type: "Certificat obtenu",
+      });
+    }
+
     const currentIdx = allLessons.findIndex((l) => l.id === activeLesson.id);
     if (currentIdx < allLessons.length - 1) {
       setActiveLesson(allLessons[currentIdx + 1]);

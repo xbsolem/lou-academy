@@ -131,6 +131,67 @@ export default function StudioEditor({
     setSaving(false);
   };
 
+  const archive = async () => {
+    if (!confirm("Archiver cette formation ? Elle ne sera plus visible dans le catalogue.")) return;
+    setSaving(true);
+    await supabase.from("courses").update({ status: "archived" }).eq("id", course.id);
+    setCourse({ ...course, status: "archived" as const });
+    setSaving(false);
+  };
+
+  const duplicate = async () => {
+    setSaving(true);
+    const { data: newCourse } = await supabase.from("courses").insert({
+      title: `${course.title} (copie)`,
+      description: course.description,
+      category: course.category,
+      level: course.level,
+      estimated_duration_minutes: course.estimated_duration_minutes,
+      thumbnail_url: course.thumbnail_url,
+      icon: course.icon,
+      gradient: course.gradient,
+      status: "draft",
+      creator_id: course.creator_id,
+    }).select().single();
+
+    if (newCourse) {
+      for (const mod of modules) {
+        const { data: newMod } = await supabase.from("modules").insert({
+          course_id: newCourse.id,
+          title: mod.title,
+          description: mod.description,
+          position: mod.position,
+        }).select().single();
+        if (!newMod) continue;
+        for (const lesson of mod.lessons) {
+          const { data: newLesson } = await supabase.from("lessons").insert({
+            module_id: newMod.id,
+            title: lesson.title,
+            description: lesson.description,
+            lesson_type: lesson.lesson_type,
+            position: lesson.position,
+            estimated_duration_minutes: lesson.estimated_duration_minutes,
+          }).select().single();
+          if (!newLesson) continue;
+          const { data: blocks } = await supabase.from("content_blocks").select("*").eq("lesson_id", lesson.id).order("position");
+          if (blocks) {
+            for (const block of blocks) {
+              await supabase.from("content_blocks").insert({
+                lesson_id: newLesson.id,
+                block_type: block.block_type,
+                content: block.content,
+                position: block.position,
+                metadata: block.metadata,
+              });
+            }
+          }
+        }
+      }
+      router.push(`/studio/${newCourse.id}`);
+    }
+    setSaving(false);
+  };
+
   const tabs = [
     { id: "content" as const, label: "Contenu", icon: "fa-layer-group" },
     { id: "info" as const, label: "Informations", icon: "fa-info-circle" },
@@ -168,6 +229,17 @@ export default function StudioEditor({
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <button
+            onClick={duplicate}
+            disabled={saving}
+            style={{
+              padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--bg)",
+              color: "var(--text)", border: "1px solid var(--border)", cursor: "pointer",
+              fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+            }}
+          >
+            <i className="fas fa-copy" /> Dupliquer
+          </button>
+          <button
             onClick={() => window.open(`/player/${course.id}?preview=1`, "_blank")}
             style={{
               padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--bg)",
@@ -189,6 +261,21 @@ export default function StudioEditor({
             >
               <i className="fas fa-eye-slash" /> Dépublier
             </button>
+          ) : course.status === "archived" ? (
+            <button
+              onClick={async () => {
+                await supabase.from("courses").update({ status: "draft" }).eq("id", course.id);
+                setCourse({ ...course, status: "draft" });
+              }}
+              disabled={saving}
+              style={{
+                padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--primary)",
+                color: "#fff", border: "none", cursor: "pointer",
+                fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+              }}
+            >
+              <i className="fas fa-undo" /> Restaurer
+            </button>
           ) : (
             <button
               onClick={publish}
@@ -200,6 +287,19 @@ export default function StudioEditor({
               }}
             >
               <i className="fas fa-rocket" /> Publier
+            </button>
+          )}
+          {course.status !== "archived" && (
+            <button
+              onClick={archive}
+              disabled={saving}
+              style={{
+                padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--bg)",
+                color: "var(--danger)", border: "1px solid var(--border)", cursor: "pointer",
+                fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+              }}
+            >
+              <i className="fas fa-archive" /> Archiver
             </button>
           )}
         </div>
