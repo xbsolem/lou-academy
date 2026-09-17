@@ -1,0 +1,255 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import type { Course, Module, Lesson } from "@/types/database";
+import ModuleList from "./ModuleList";
+import LessonEditor from "./LessonEditor";
+import AiWizard from "./AiWizard";
+import CourseInfoTab from "./CourseInfoTab";
+
+type ModuleWithLessons = Module & { lessons: (Lesson & { content_blocks: { id: string }[] })[] };
+
+export default function StudioEditor({
+  course: initialCourse,
+  initialModules,
+}: {
+  course: Course;
+  initialModules: ModuleWithLessons[];
+}) {
+  const [course, setCourse] = useState(initialCourse);
+  const [modules, setModules] = useState(initialModules);
+  const [activeTab, setActiveTab] = useState<"content" | "info" | "ai">("content");
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const supabase = createClient();
+  const router = useRouter();
+
+  const refresh = useCallback(async () => {
+    const { data } = await supabase
+      .from("modules")
+      .select("*, lessons(*, content_blocks(id))")
+      .eq("course_id", course.id)
+      .order("position")
+      .order("position", { referencedTable: "lessons" });
+    if (data) setModules(data as ModuleWithLessons[]);
+  }, [course.id, supabase]);
+
+  const addModule = async () => {
+    const maxPos = modules.length > 0 ? Math.max(...modules.map((m) => m.position)) : -1;
+    const { error } = await supabase.from("modules").insert({
+      course_id: course.id,
+      title: "Nouveau module",
+      position: maxPos + 1,
+    });
+    if (!error) await refresh();
+  };
+
+  const renameModule = async (id: string, title: string) => {
+    await supabase.from("modules").update({ title }).eq("id", id);
+    await refresh();
+  };
+
+  const deleteModule = async (id: string) => {
+    if (!confirm("Supprimer ce module et toutes ses lecons ?")) return;
+    await supabase.from("modules").delete().eq("id", id);
+    await refresh();
+  };
+
+  const moveModule = async (id: string, direction: "up" | "down") => {
+    const idx = modules.findIndex((m) => m.id === id);
+    if (idx < 0) return;
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= modules.length) return;
+    const a = modules[idx];
+    const b = modules[swapIdx];
+    await Promise.all([
+      supabase.from("modules").update({ position: b.position }).eq("id", a.id),
+      supabase.from("modules").update({ position: a.position }).eq("id", b.id),
+    ]);
+    await refresh();
+  };
+
+  const addLesson = async (moduleId: string) => {
+    const mod = modules.find((m) => m.id === moduleId);
+    const maxPos = mod && mod.lessons.length > 0 ? Math.max(...mod.lessons.map((l) => l.position)) : -1;
+    const { error } = await supabase.from("lessons").insert({
+      module_id: moduleId,
+      title: "Nouvelle lecon",
+      lesson_type: "lesson",
+      position: maxPos + 1,
+    });
+    if (!error) await refresh();
+  };
+
+  const deleteLesson = async (id: string) => {
+    if (!confirm("Supprimer cette lecon ?")) return;
+    setSelectedLesson(null);
+    await supabase.from("lessons").delete().eq("id", id);
+    await refresh();
+  };
+
+  const moveLesson = async (id: string, moduleId: string, direction: "up" | "down") => {
+    const mod = modules.find((m) => m.id === moduleId);
+    if (!mod) return;
+    const idx = mod.lessons.findIndex((l) => l.id === id);
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= mod.lessons.length) return;
+    const a = mod.lessons[idx];
+    const b = mod.lessons[swapIdx];
+    await Promise.all([
+      supabase.from("lessons").update({ position: b.position }).eq("id", a.id),
+      supabase.from("lessons").update({ position: a.position }).eq("id", b.id),
+    ]);
+    await refresh();
+  };
+
+  const publish = async () => {
+    if (!course.title) return alert("Le titre est requis.");
+    if (!course.description) return alert("La description est requise.");
+    if (modules.length === 0) return alert("Au moins 1 module est requis.");
+    const hasLesson = modules.some((m) => m.lessons.length > 0);
+    if (!hasLesson) return alert("Au moins 1 lecon est requise.");
+
+    setSaving(true);
+    await supabase.from("courses").update({
+      status: "published",
+      published_at: new Date().toISOString(),
+    }).eq("id", course.id);
+    setCourse({ ...course, status: "published", published_at: new Date().toISOString() });
+    setSaving(false);
+  };
+
+  const unpublish = async () => {
+    setSaving(true);
+    await supabase.from("courses").update({ status: "draft", published_at: null }).eq("id", course.id);
+    setCourse({ ...course, status: "draft", published_at: null });
+    setSaving(false);
+  };
+
+  const tabs = [
+    { id: "content" as const, label: "Contenu", icon: "fa-layer-group" },
+    { id: "info" as const, label: "Informations", icon: "fa-info-circle" },
+    { id: "ai" as const, label: "IA", icon: "fa-wand-magic-sparkles" },
+  ];
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button
+            onClick={() => router.push("/studio")}
+            style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.1rem", color: "var(--text-light)" }}
+          >
+            <i className="fas fa-arrow-left" />
+          </button>
+          <h1 style={{ fontSize: "1.4rem", fontWeight: 700 }}>{course.title}</h1>
+          <span
+            style={{
+              padding: "4px 12px",
+              borderRadius: 20,
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              background: course.status === "published" ? "#ecfdf5" : course.status === "draft" ? "#fffbeb" : "#fef2f2",
+              color: course.status === "published" ? "#059669" : course.status === "draft" ? "#d97706" : "#dc2626",
+            }}
+          >
+            {course.status === "published" ? "Publié" : course.status === "draft" ? "Brouillon" : "Archivé"}
+          </span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => window.open(`/player/${course.id}?preview=1`, "_blank")}
+            style={{
+              padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--bg)",
+              color: "var(--text)", border: "1px solid var(--border)", cursor: "pointer",
+              fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+            }}
+          >
+            <i className="fas fa-eye" /> Prévisualiser
+          </button>
+          {course.status === "published" ? (
+            <button
+              onClick={unpublish}
+              disabled={saving}
+              style={{
+                padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--warning)",
+                color: "#fff", border: "none", cursor: "pointer",
+                fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+              }}
+            >
+              <i className="fas fa-eye-slash" /> Dépublier
+            </button>
+          ) : (
+            <button
+              onClick={publish}
+              disabled={saving}
+              style={{
+                padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--success)",
+                color: "#fff", border: "none", cursor: "pointer",
+                fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+              }}
+            >
+              <i className="fas fa-rocket" /> Publier
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", borderBottom: "2px solid var(--border)", marginBottom: 24 }}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => { setActiveTab(tab.id); setSelectedLesson(null); }}
+            style={{
+              padding: "12px 24px", cursor: "pointer", fontSize: "0.9rem", fontWeight: 500,
+              color: activeTab === tab.id ? "var(--primary)" : "var(--text-light)",
+              borderBottom: `2px solid ${activeTab === tab.id ? "var(--primary)" : "transparent"}`,
+              marginBottom: -2, background: "none", border: "none",
+              borderTop: "none", borderLeft: "none", borderRight: "none",
+              fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 8,
+            }}
+          >
+            <i className={`fas ${tab.icon}`} /> {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "content" && !selectedLesson && (
+        <ModuleList
+          modules={modules}
+          onAddModule={addModule}
+          onRenameModule={renameModule}
+          onDeleteModule={deleteModule}
+          onMoveModule={moveModule}
+          onAddLesson={addLesson}
+          onDeleteLesson={deleteLesson}
+          onMoveLesson={moveLesson}
+          onSelectLesson={setSelectedLesson}
+        />
+      )}
+
+      {activeTab === "content" && selectedLesson && (
+        <LessonEditor
+          lessonId={selectedLesson}
+          courseId={course.id}
+          onBack={() => setSelectedLesson(null)}
+          onRefresh={refresh}
+        />
+      )}
+
+      {activeTab === "info" && (
+        <CourseInfoTab course={course} onUpdate={(updated) => setCourse(updated)} />
+      )}
+
+      {activeTab === "ai" && (
+        <AiWizard courseId={course.id} onDone={() => { setActiveTab("content"); refresh(); }} />
+      )}
+    </div>
+  );
+}
