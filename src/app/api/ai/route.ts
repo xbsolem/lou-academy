@@ -111,6 +111,46 @@ La langue du contenu doit etre le francais.`;
       return NextResponse.json({ blocks: result.result?.blocks || [] });
     }
 
+    if (action === "tutor") {
+      const { courseTitle, lessonTitle, lessonContent, question, history } = body;
+
+      const system = `Tu es un tuteur pedagogique bienveillant pour la plateforme LOU Academy.
+Tu aides les apprenants a comprendre les concepts sans donner directement la reponse.
+Tu privilegies: 1) l'explication, 2) les indices, 3) les pistes, 4) les exemples differents.
+Tu es patient, encourageant et precis.
+Contexte actuel:
+- Formation: ${courseTitle || "Non precisee"}
+- Lecon: ${lessonTitle || "Non precisee"}
+- Contenu de la lecon: ${lessonContent ? lessonContent.substring(0, 2000) : "Non disponible"}
+Reponds en francais.`;
+
+      const messagesForAi = [
+        { role: "system" as const, content: system },
+        ...(history || []).map((m: { role: string; content: string }) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+        { role: "user" as const, content: question },
+      ];
+
+      if (!OPENAI_API_KEY) {
+        return NextResponse.json({ error: "Le fournisseur IA n'est pas encore configure." });
+      }
+
+      const res = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${OPENAI_API_KEY}` },
+        body: JSON.stringify({ model: OPENAI_MODEL, messages: messagesForAi, temperature: 0.7, max_tokens: 1000 }),
+      });
+
+      if (!res.ok) {
+        return NextResponse.json({ error: `Erreur API IA: ${res.status}` }, { status: 500 });
+      }
+
+      const data = await res.json();
+      return NextResponse.json({ response: data.choices?.[0]?.message?.content || "..." });
+    }
+
     return NextResponse.json({ error: "Action inconnue" }, { status: 400 });
   } catch (err) {
     console.error("AI API error:", err);

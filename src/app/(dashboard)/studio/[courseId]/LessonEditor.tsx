@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Lesson, ContentBlock } from "@/types/database";
+import QuizEditor from "./QuizEditor";
 
 const BLOCK_TYPES = [
   { type: "heading", label: "Titre", icon: "fa-heading" },
@@ -29,6 +30,7 @@ export default function LessonEditor({
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [lessonTab, setLessonTab] = useState<"content" | "quiz">("content");
   const supabase = createClient();
 
   const loadData = useCallback(async () => {
@@ -145,6 +147,29 @@ export default function LessonEditor({
         {saving && <span style={{ fontSize: "0.8rem", color: "var(--text-lighter)" }}>Sauvegarde...</span>}
       </div>
 
+      {/* Lesson Tabs */}
+      <div style={{ display: "flex", gap: 0, borderBottom: "2px solid var(--border)", marginBottom: 20 }}>
+        {[
+          { id: "content" as const, label: "Contenu", icon: "fa-file-alt" },
+          { id: "quiz" as const, label: "Quiz", icon: "fa-question-circle" },
+        ].map((t) => (
+          <button key={t.id} onClick={() => setLessonTab(t.id)}
+            style={{
+              padding: "10px 20px", cursor: "pointer", fontSize: "0.85rem", fontWeight: 500,
+              color: lessonTab === t.id ? "var(--primary)" : "var(--text-light)",
+              borderBottom: `2px solid ${lessonTab === t.id ? "var(--primary)" : "transparent"}`,
+              marginBottom: -2, background: "none", border: "none", borderTop: "none", borderLeft: "none", borderRight: "none",
+              fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+            }}
+          >
+            <i className={`fas ${t.icon}`} /> {t.label}
+          </button>
+        ))}
+      </div>
+
+      {lessonTab === "quiz" && <QuizEditor lessonId={lessonId} />}
+
+      {lessonTab === "content" && <>
       {/* AI Actions */}
       <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
         {[
@@ -251,6 +276,7 @@ export default function LessonEditor({
           </button>
         ))}
       </div>
+      </>}
     </div>
   );
 }

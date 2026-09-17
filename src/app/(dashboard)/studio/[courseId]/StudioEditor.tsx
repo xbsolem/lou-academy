@@ -8,6 +8,9 @@ import ModuleList from "./ModuleList";
 import LessonEditor from "./LessonEditor";
 import AiWizard from "./AiWizard";
 import CourseInfoTab from "./CourseInfoTab";
+import SourcesTab from "./SourcesTab";
+import AnalyticsTab from "./AnalyticsTab";
+import EnrolleesTab from "./EnrolleesTab";
 
 type ModuleWithLessons = Module & { lessons: (Lesson & { content_blocks: { id: string }[] })[] };
 
@@ -20,7 +23,7 @@ export default function StudioEditor({
 }) {
   const [course, setCourse] = useState(initialCourse);
   const [modules, setModules] = useState(initialModules);
-  const [activeTab, setActiveTab] = useState<"content" | "info" | "ai">("content");
+  const [activeTab, setActiveTab] = useState<"content" | "info" | "enrollees" | "sources" | "analytics" | "ai">("content");
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
@@ -131,6 +134,9 @@ export default function StudioEditor({
   const tabs = [
     { id: "content" as const, label: "Contenu", icon: "fa-layer-group" },
     { id: "info" as const, label: "Informations", icon: "fa-info-circle" },
+    { id: "enrollees" as const, label: "Apprenants", icon: "fa-users" },
+    { id: "sources" as const, label: "Sources", icon: "fa-folder-open" },
+    { id: "analytics" as const, label: "Analytics", icon: "fa-chart-bar" },
     { id: "ai" as const, label: "IA", icon: "fa-wand-magic-sparkles" },
   ];
 
@@ -221,6 +227,45 @@ export default function StudioEditor({
 
       {/* Tab Content */}
       {activeTab === "content" && !selectedLesson && (
+        <>
+        {modules.length > 0 && modules.some((m) => m.lessons.length > 0) && (
+          <div style={{ marginBottom: 16 }}>
+            <button
+              onClick={async () => {
+                if (!confirm("Generer le contenu IA pour toutes les lecons vides ? Cela peut prendre du temps.")) return;
+                setSaving(true);
+                const allLessons = modules.flatMap((m) => m.lessons);
+                for (const lesson of allLessons) {
+                  if (lesson.content_blocks && lesson.content_blocks.length > 0) continue;
+                  try {
+                    const res = await fetch("/api/ai", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "lesson_content", lessonTitle: lesson.title, courseId: course.id, aiAction: "generate", existingContent: "" }),
+                    });
+                    const data = await res.json();
+                    if (data.blocks && Array.isArray(data.blocks)) {
+                      for (let i = 0; i < data.blocks.length; i++) {
+                        await supabase.from("content_blocks").insert({
+                          lesson_id: lesson.id,
+                          block_type: data.blocks[i].type || "text",
+                          content: data.blocks[i].content || "",
+                          position: i,
+                        });
+                      }
+                    }
+                  } catch { /* skip on error */ }
+                }
+                await refresh();
+                setSaving(false);
+              }}
+              disabled={saving}
+              style={{ padding: "8px 16px", borderRadius: "var(--radius-sm)", background: "var(--primary)", color: "#fff", border: "none", cursor: saving ? "not-allowed" : "pointer", fontSize: "0.85rem", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 8, opacity: saving ? 0.7 : 1 }}
+            >
+              <i className="fas fa-wand-magic-sparkles" /> {saving ? "Generation en cours..." : "Generer le contenu (IA)"}
+            </button>
+          </div>
+        )}
         <ModuleList
           modules={modules}
           onAddModule={addModule}
@@ -232,6 +277,7 @@ export default function StudioEditor({
           onMoveLesson={moveLesson}
           onSelectLesson={setSelectedLesson}
         />
+        </>
       )}
 
       {activeTab === "content" && selectedLesson && (
@@ -246,6 +292,12 @@ export default function StudioEditor({
       {activeTab === "info" && (
         <CourseInfoTab course={course} onUpdate={(updated) => setCourse(updated)} />
       )}
+
+      {activeTab === "enrollees" && <EnrolleesTab courseId={course.id} />}
+
+      {activeTab === "sources" && <SourcesTab courseId={course.id} />}
+
+      {activeTab === "analytics" && <AnalyticsTab courseId={course.id} />}
 
       {activeTab === "ai" && (
         <AiWizard courseId={course.id} onDone={() => { setActiveTab("content"); refresh(); }} />

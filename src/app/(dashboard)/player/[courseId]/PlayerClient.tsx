@@ -3,6 +3,9 @@
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Course, Module, Lesson, ContentBlock } from "@/types/database";
+import QuizPlayer from "@/components/ui/QuizPlayer";
+import SqlExercise from "@/components/ui/SqlExercise";
+import AiTutor from "@/components/ui/AiTutor";
 
 type LessonFull = Lesson & { content_blocks: ContentBlock[] };
 type ModuleFull = Module & { lessons: LessonFull[] };
@@ -123,6 +126,43 @@ export default function PlayerClient({
         {activeLesson ? (
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 24 }}>{activeLesson.title}</h2>
+            {/* Quiz Lesson */}
+            {activeLesson.lesson_type === "quiz" && (
+              <div style={{ marginBottom: 24 }}>
+                <QuizPlayer
+                  lessonId={activeLesson.id}
+                  isPreview={isPreview}
+                  onComplete={async (passed) => {
+                    if (passed && !isPreview) {
+                      await markComplete();
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {/* SQL Exercise */}
+            {activeLesson.lesson_type === "sql_exercise" && activeLesson.content_blocks?.some((b) => b.block_type === "sql_exercise") && (
+              <div style={{ marginBottom: 24 }}>
+                {activeLesson.content_blocks
+                  .filter((b) => b.block_type === "sql_exercise")
+                  .map((block) => {
+                    let exerciseData;
+                    try { exerciseData = JSON.parse(block.content); } catch { exerciseData = null; }
+                    if (!exerciseData) return null;
+                    return (
+                      <SqlExercise
+                        key={block.id}
+                        lessonId={activeLesson.id}
+                        exerciseData={exerciseData}
+                        isPreview={isPreview}
+                      />
+                    );
+                  })}
+              </div>
+            )}
+
+            {/* Content */}
             <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
               {activeLesson.content_blocks && activeLesson.content_blocks.length > 0 ? (
                 activeLesson.content_blocks.map((block) => (
@@ -209,6 +249,15 @@ export default function PlayerClient({
           </div>
         )}
       </div>
+
+      {/* AI Tutor */}
+      {!isPreview && (
+        <AiTutor
+          courseTitle={course.title}
+          lessonTitle={activeLesson?.title || ""}
+          lessonContent={activeLesson?.content_blocks?.map((b) => b.content).join("\n") || ""}
+        />
+      )}
     </div>
   );
 }
