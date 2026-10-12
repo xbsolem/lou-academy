@@ -21,7 +21,7 @@ export default async function MesFormationsPage() {
       </p>
 
       {enrollments && enrollments.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+        <div className="cards-grid">
           {enrollments.map((e) => {
             const c = e.courses as { id: string; title: string; description: string | null; gradient: string | null; icon: string | null; category: string | null } | null;
             if (!c) return null;

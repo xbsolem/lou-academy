@@ -1,7 +1,4 @@
--- LOU Academy - Database Schema
--- Run this in your Supabase SQL Editor
-
--- Profiles
+-- Profiles (extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
@@ -16,6 +13,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   last_activity_at TIMESTAMPTZ
 );
 
+CREATE INDEX idx_profiles_role ON profiles(role);
+CREATE INDEX idx_profiles_email ON profiles(email);
+
 -- Courses
 CREATE TABLE IF NOT EXISTS courses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS courses (
   estimated_duration_minutes INTEGER,
   thumbnail_url TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
-  creator_id UUID NOT NULL REFERENCES profiles(id),
+  creator_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   icon TEXT,
   gradient TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -71,7 +71,7 @@ CREATE INDEX idx_lessons_module ON lessons(module_id);
 CREATE TABLE IF NOT EXISTS content_blocks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   lesson_id UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
-  block_type TEXT NOT NULL CHECK (block_type IN ('text', 'heading', 'callout', 'code', 'image', 'video', 'file', 'quiz', 'sql_exercise')),
+  block_type TEXT NOT NULL DEFAULT 'text' CHECK (block_type IN ('text', 'heading', 'callout', 'code', 'image', 'video', 'file', 'quiz', 'sql_exercise')),
   content TEXT NOT NULL DEFAULT '',
   position INTEGER NOT NULL DEFAULT 0,
   metadata JSONB,
@@ -79,4 +79,4 @@ CREATE TABLE IF NOT EXISTS content_blocks (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_content_blocks_lesson ON content_blocks(lesson_id);
+CREATE INDEX idx_blocks_lesson ON content_blocks(lesson_id);

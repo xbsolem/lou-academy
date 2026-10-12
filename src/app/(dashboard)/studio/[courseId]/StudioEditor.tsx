@@ -204,8 +204,8 @@ export default function StudioEditor({
   return (
     <div>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+      <div className="studio-header">
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
           <button
             onClick={() => router.push("/studio")}
             style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.1rem", color: "var(--text-light)" }}
@@ -227,7 +227,7 @@ export default function StudioEditor({
             {course.status === "published" ? "Publié" : course.status === "draft" ? "Brouillon" : "Archivé"}
           </span>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="studio-header-actions">
           <button
             onClick={duplicate}
             disabled={saving}
@@ -306,7 +306,7 @@ export default function StudioEditor({
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", borderBottom: "2px solid var(--border)", marginBottom: 24 }}>
+      <div className="studio-tabs" style={{ borderBottom: "2px solid var(--border)", marginBottom: 24 }}>
         {tabs.map((tab) => (
           <button
             key={tab.id}

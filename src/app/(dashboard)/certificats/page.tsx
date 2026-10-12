@@ -21,7 +21,7 @@ export default async function CertificatsPage() {
       </p>
 
       {certs && certs.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+        <div className="cards-grid">
           {certs.map((cert) => {
             const courseName = (cert.courses as { title: string } | null)?.title || "Formation";
             const learnerName = isAdmin && cert.profiles

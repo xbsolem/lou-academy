@@ -108,10 +108,7 @@ export default function LearnerDetail({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "var(--bg-card)", borderRadius: 16, width: "90%", maxWidth: 640,
-          maxHeight: "85vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-        }}
+        className="learner-modal-content"
       >
         {/* Header */}
         <div style={{ padding: "24px 28px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 16 }}>
@@ -204,7 +201,7 @@ export default function LearnerDetail({
 
         {/* Info */}
         <div style={{ padding: "20px 28px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+          <div className="form-grid-2" style={{ gap: 16, marginBottom: 24 }}>
             <div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-lighter)", fontWeight: 600, marginBottom: 4 }}>Inscrit depuis</div>
               <div style={{ fontSize: "0.9rem" }}>{new Date(learner.created_at).toLocaleDateString("fr-FR")}</div>

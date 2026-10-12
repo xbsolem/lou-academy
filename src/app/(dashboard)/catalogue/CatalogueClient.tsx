@@ -76,7 +76,7 @@ export default function CatalogueClient({
       </div>
 
       {filtered.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+        <div className="cards-grid">
           {filtered.map((course) => {
             const isEnrolled = enrolled.has(course.id);
             const gradient = course.gradient || "linear-gradient(135deg, #4f46e5, #06b6d4)";

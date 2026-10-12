@@ -1,8 +1,7 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/layout/Sidebar";
-import Topbar from "@/components/layout/Topbar";
 import type { Profile } from "@/types/database";
+import DashboardShell from "@/components/layout/DashboardShell";
 
 export default async function DashboardLayout({
   children,
@@ -24,13 +23,5 @@ export default async function DashboardLayout({
 
   if (!profile) redirect("/login");
 
-  return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar profile={profile as Profile} />
-      <main style={{ marginLeft: 260, flex: 1, minHeight: "100vh" }}>
-        <Topbar />
-        <div style={{ padding: 32 }}>{children}</div>
-      </main>
-    </div>
-  );
+  return <DashboardShell profile={profile as Profile}>{children}</DashboardShell>;
 }

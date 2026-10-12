@@ -145,7 +145,7 @@ export default function SqlExercise({
             resize: "vertical",
           }}
         />
-        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+        <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
           <button onClick={executeQuery} disabled={running || !query.trim()}
             style={{
               padding: "8px 20px", borderRadius: "var(--radius-sm)", background: "var(--success)",
@@ -206,7 +206,7 @@ export default function SqlExercise({
 
       {/* Results Table */}
       {results && results.columns.length > 0 && (
-        <div style={{ overflow: "auto", borderRadius: 8, border: "1px solid var(--border)" }}>
+        <div className="table-responsive" style={{ borderRadius: 8, border: "1px solid var(--border)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
             <thead>
               <tr>

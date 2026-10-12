@@ -49,14 +49,7 @@ export default async function DashboardPage() {
       </p>
 
       {/* Stats Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: 20,
-          marginBottom: 32,
-        }}
-      >
+      <div className="stats-grid" style={{ marginBottom: 32 }}>
         {stats.map((s) => (
           <div
             key={s.label}

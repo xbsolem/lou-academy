@@ -62,14 +62,8 @@ export default function AiTutor({
   if (!open) {
     return (
       <button
+        className="ai-tutor-fab"
         onClick={() => setOpen(true)}
-        style={{
-          position: "fixed", bottom: 24, right: 24, width: 56, height: 56,
-          borderRadius: "50%", background: "var(--primary)", color: "#fff",
-          border: "none", cursor: "pointer", boxShadow: "0 4px 16px rgba(79,70,229,0.4)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "1.2rem", zIndex: 1000,
-        }}
         title="Demander a l'IA"
       >
         <i className="fas fa-robot" />
@@ -78,12 +72,7 @@ export default function AiTutor({
   }
 
   return (
-    <div style={{
-      position: "fixed", bottom: 24, right: 24, width: 380, height: 520,
-      background: "var(--bg-card)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-      display: "flex", flexDirection: "column", zIndex: 1000, overflow: "hidden",
-      border: "1px solid var(--border)",
-    }}>
+    <div className="ai-tutor-panel">
       {/* Header */}
       <div style={{ padding: "14px 16px", background: "var(--primary)", color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
         <i className="fas fa-robot" />

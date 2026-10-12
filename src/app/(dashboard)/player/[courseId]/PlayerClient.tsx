@@ -26,6 +26,7 @@ export default function PlayerClient({
     modules[0]?.lessons?.[0] || null
   );
   const [completing, setCompleting] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const supabase = createClient();
 
   const allLessons = modules.flatMap((m) => m.lessons);
@@ -87,14 +88,24 @@ export default function PlayerClient({
 
   const goToLesson = (lesson: LessonFull) => {
     setActiveLesson(lesson);
+    setSidebarOpen(false);
   };
 
   const currentIdx = activeLesson ? allLessons.findIndex((l) => l.id === activeLesson.id) : -1;
 
   return (
-    <div style={{ display: "flex", gap: 24, minHeight: "calc(100vh - 160px)" }}>
+    <div className="player-layout">
+      {/* Mobile toggle */}
+      <button
+        className="player-sidebar-toggle"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        <i className={`fas ${sidebarOpen ? "fa-chevron-up" : "fa-chevron-down"}`} />
+        {sidebarOpen ? "Masquer le sommaire" : "Afficher le sommaire"}
+      </button>
+
       {/* Sidebar */}
-      <div style={{ width: 280, flexShrink: 0, background: "var(--bg-card)", borderRadius: "var(--radius)", boxShadow: "var(--shadow)", padding: 16, overflowY: "auto", maxHeight: "calc(100vh - 160px)" }}>
+      <div className={`player-sidebar${!sidebarOpen ? " collapsed" : ""}`}>
         <h3 style={{ fontSize: "0.95rem", fontWeight: 600, marginBottom: 16, padding: "0 8px" }}>{course.title}</h3>
         {isPreview && (
           <div style={{ padding: "6px 12px", background: "#fffbeb", color: "#d97706", borderRadius: 8, fontSize: "0.75rem", fontWeight: 600, marginBottom: 12, textAlign: "center" }}>
@@ -137,7 +148,7 @@ export default function PlayerClient({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1 }}>
+      <div className="player-content">
         {activeLesson ? (
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 24 }}>{activeLesson.title}</h2>
@@ -213,7 +224,7 @@ export default function PlayerClient({
             </div>
 
             {/* Navigation */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="player-nav">
               <button
                 onClick={() => currentIdx > 0 && setActiveLesson(allLessons[currentIdx - 1])}
                 disabled={currentIdx <= 0}

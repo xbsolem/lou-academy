@@ -87,7 +87,8 @@ export default function ApprenantsClient({
             borderRadius: "var(--radius-sm)",
             fontSize: "0.85rem",
             fontFamily: "inherit",
-            width: 240,
+            width: "100%",
+            maxWidth: 240,
           }}
         />
       </div>
@@ -100,6 +101,7 @@ export default function ApprenantsClient({
           overflow: "hidden",
         }}
       >
+        <div className="table-responsive">
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -235,6 +237,7 @@ export default function ApprenantsClient({
             })}
           </tbody>
         </table>
+        </div>
         {filtered.length === 0 && (
           <div style={{ textAlign: "center", padding: 40, color: "var(--text-light)" }}>
             Aucun apprenant trouve.

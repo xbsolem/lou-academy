@@ -19,7 +19,7 @@ export default async function ParametresPage() {
           <i className="fas fa-building" style={{ marginRight: 8, color: "var(--primary)" }} />
           Informations de la plateforme
         </h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+        <div className="form-grid-2" style={{ marginBottom: 20 }}>
           <div>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: 6 }}>Nom de la plateforme</label>
             <input type="text" defaultValue="LOU Academy" style={{ width: "100%", padding: "10px 14px", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", fontSize: "0.9rem", fontFamily: "inherit" }} />

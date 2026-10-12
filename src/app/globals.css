@@ -63,3 +63,464 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ===== RESPONSIVE UTILITIES ===== */
+
+/* Mobile sidebar overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* Hamburger button */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--text);
+  padding: 4px;
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive grid helpers */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Studio tabs scroll wrapper */
+.studio-tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.studio-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Studio header */
+.studio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.studio-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Player layout */
+.player-layout {
+  display: flex;
+  gap: 24px;
+  min-height: calc(100vh - 160px);
+}
+
+.player-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 160px);
+}
+
+.player-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Player toggle button (mobile) */
+.player-sidebar-toggle {
+  display: none;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  text-align: left;
+}
+.player-sidebar-toggle i {
+  margin-right: 8px;
+}
+
+/* Dashboard layout */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-main {
+  margin-left: 260px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+.dashboard-main-inner {
+  padding: 32px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-search {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+
+/* AI Tutor responsive */
+.ai-tutor-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  z-index: 1000;
+}
+
+.ai-tutor-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  height: 520px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+/* Login responsive */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+  padding: 16px;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 48px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  width: 260px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+/* Learner detail modal responsive */
+.learner-modal-content {
+  background: var(--bg-card);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+/* Form grid responsive */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Reports bar chart label */
+.report-bar-label {
+  width: 200px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+/* Nav buttons on player */
+.player-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== TABLET (< 1024px) ===== */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .player-sidebar {
+    width: 240px;
+  }
+
+  .dashboard-main-inner {
+    padding: 24px;
+  }
+
+  .topbar {
+    padding: 12px 20px;
+  }
+
+  .studio-header-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===== MOBILE (< 768px) ===== */
+@media (max-width: 768px) {
+  /* Sidebar hidden by default, show when .open */
+  .sidebar-nav {
+    transform: translateX(-100%);
+  }
+  .sidebar-nav.open {
+    transform: translateX(0);
+  }
+
+  /* Show hamburger */
+  .hamburger-btn {
+    display: flex;
+  }
+
+  /* Main content full width */
+  .dashboard-main {
+    margin-left: 0;
+  }
+
+  .dashboard-main-inner {
+    padding: 16px;
+  }
+
+  /* Topbar */
+  .topbar {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .topbar-search {
+    max-width: none;
+  }
+
+  /* Stats grid: 1 column on mobile */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Cards grid: 1 column on mobile */
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Player layout stacks */
+  .player-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .player-sidebar {
+    width: 100%;
+    max-height: none;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+  }
+
+  .player-sidebar.collapsed {
+    display: none;
+  }
+
+  .player-sidebar-toggle {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Studio header stacks */
+  .studio-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .studio-header-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .studio-header-actions button {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+  }
+
+  /* Studio tabs scroll */
+  .studio-tabs {
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .studio-tabs button {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 10px 16px !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* AI Tutor fullscreen */
+  .ai-tutor-panel {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  /* Login card */
+  .login-card {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
+
+  /* Form grid stacks */
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Learner modal */
+  .learner-modal-content {
+    width: 95%;
+    max-height: 90vh;
+    border-radius: 12px;
+  }
+
+  /* Reports bar chart label */
+  .report-bar-label {
+    width: 120px;
+    font-size: 0.8rem;
+  }
+
+  /* Player nav stacks on small */
+  .player-nav {
+    flex-wrap: wrap;
+  }
+  .player-nav button {
+    font-size: 0.82rem !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Table minimum width for scroll */
+  .table-responsive table {
+    min-width: 600px;
+  }
+}
+
+/* ===== SMALL MOBILE (< 480px) ===== */
+@media (max-width: 480px) {
+  .dashboard-main-inner {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 24px 16px;
+  }
+
+  .report-bar-label {
+    width: 80px;
+    font-size: 0.75rem;
+  }
+
+  .studio-header-actions button {
+    font-size: 0.72rem !important;
+    padding: 6px 8px !important;
+  }
+
+  .studio-header-actions button span.btn-label {
+    display: none;
+  }
+
+  .player-nav {
+    gap: 8px;
+  }
+}

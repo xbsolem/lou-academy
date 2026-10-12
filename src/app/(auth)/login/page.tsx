@@ -12,17 +12,19 @@ export default function LoginPage() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     const supabase = createClient();
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -30,7 +32,13 @@ export default function LoginPage() {
         },
       });
       if (error) {
-        setError(error.message);
+        setError(humanAuthError(error.message));
+        setLoading(false);
+        return;
+      }
+      if (!data.session) {
+        setSuccess("Compte cree. Verifiez votre email pour confirmer, puis connectez-vous.");
+        setIsSignUp(false);
         setLoading(false);
         return;
       }
@@ -40,7 +48,7 @@ export default function LoginPage() {
         password,
       });
       if (error) {
-        setError(error.message);
+        setError(humanAuthError(error.message));
         setLoading(false);
         return;
       }
@@ -50,26 +58,26 @@ export default function LoginPage() {
     router.refresh();
   };
 
+  function humanAuthError(message: string) {
+    const lower = message.toLowerCase();
+    if (lower.includes("failed to fetch") || lower.includes("fetch failed") || lower.includes("network")) {
+      return "Impossible de joindre la base. Le projet Supabase est probablement en pause ou supprime. Restaure-le sur supabase.com puis reessaie.";
+    }
+    if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
+      return "Email ou mot de passe incorrect.";
+    }
+    if (lower.includes("email not confirmed")) {
+      return "Confirme d'abord ton email (lien recu dans ta boite mail), puis reconnecte-toi.";
+    }
+    if (lower.includes("rate limit")) {
+      return "Trop de tentatives. Attends quelques minutes, ou cree le compte dans Supabase (Authentication > Add user).";
+    }
+    return message;
+  }
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #1e293b 0%, #4f46e5 100%)",
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "16px",
-          padding: "48px",
-          width: "100%",
-          maxWidth: "440px",
-          boxShadow: "0 25px 50px rgba(0,0,0,0.25)",
-        }}
-      >
+    <div className="login-container">
+      <div className="login-card">
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <i
             className="fas fa-graduation-cap"
@@ -101,17 +109,24 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+        {success && (
+          <div
+            style={{
+              background: "#ecfdf5",
+              color: "#059669",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              fontSize: "0.85rem",
+              marginBottom: "20px",
+            }}
+          >
+            {success}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {isSignUp && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "12px",
-                marginBottom: "16px",
-              }}
-            >
+            <div className="form-grid-2" style={{ gap: "12px", marginBottom: "16px" }}>
               <div>
                 <label
                   style={{
@@ -264,6 +279,7 @@ export default function LoginPage() {
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError("");
+              setSuccess("");
             }}
             style={{
               background: "none",

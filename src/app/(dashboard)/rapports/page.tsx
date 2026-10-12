@@ -37,7 +37,7 @@ export default async function RapportsPage() {
       <h1 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 8 }}>Rapports et statistiques</h1>
       <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>Analysez les performances de votre plateforme</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 32 }}>
+      <div className="stats-grid" style={{ marginBottom: 32 }}>
         {stats.map((s) => (
           <div key={s.label} style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 52, height: 52, borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", background: s.bg, color: s.color }}>
@@ -57,7 +57,7 @@ export default async function RapportsPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {coursesWithCount.map((c) => (
               <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 200, fontSize: "0.85rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.title}</span>
+                <span className="report-bar-label">{c.title}</span>
                 <div style={{ flex: 1, height: 8, background: "var(--border)", borderRadius: 10, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${(c.count / maxCount) * 100}%`, background: "var(--primary)", borderRadius: 10 }} />
                 </div>

@@ -55,13 +55,7 @@ export default async function StudioListPage() {
       </div>
 
       {courses && courses.length > 0 ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 24,
-          }}
-        >
+        <div className="cards-grid">
           {courses.map((course) => (
             <CourseCard
               key={course.id}

@@ -2,24 +2,19 @@
 
 import { useState } from "react";
 
-export default function Topbar() {
+export default function Topbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const [search, setSearch] = useState("");
 
   return (
-    <header
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 16,
-        padding: "16px 32px",
-        background: "var(--bg-card)",
-        borderBottom: "1px solid var(--border)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-      }}
-    >
-      <div style={{ flex: 1, maxWidth: 500, position: "relative" }}>
+    <header className="topbar">
+      <button
+        className="hamburger-btn"
+        onClick={onToggleSidebar}
+        aria-label="Menu"
+      >
+        <i className="fas fa-bars" />
+      </button>
+      <div className="topbar-search">
         <i
           className="fas fa-search"
           style={{

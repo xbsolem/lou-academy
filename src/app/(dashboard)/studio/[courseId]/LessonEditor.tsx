@@ -148,7 +148,7 @@ export default function LessonEditor({
       </div>
 
       {/* Lesson Tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "2px solid var(--border)", marginBottom: 20 }}>
+      <div className="studio-tabs" style={{ borderBottom: "2px solid var(--border)", marginBottom: 20 }}>
         {[
           { id: "content" as const, label: "Contenu", icon: "fa-file-alt" },
           { id: "quiz" as const, label: "Quiz", icon: "fa-question-circle" },
