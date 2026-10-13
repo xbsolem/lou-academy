@@ -1,6 +1,115 @@
 import { createServerSupabase } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function DashboardPage() {
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, first_name")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role === "learner") {
+    return <LearnerHome userId={user.id} firstName={profile.first_name} />;
+  }
+
+  return <AdminHome />;
+}
+
+async function LearnerHome({
+  userId,
+  firstName,
+}: {
+  userId: string;
+  firstName: string;
+}) {
+  const supabase = await createServerSupabase();
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("progress_percent, status, courses(id, title, icon, gradient)")
+    .eq("user_id", userId)
+    .order("last_activity_at", { ascending: false })
+    .limit(6);
+
+  const inProgress = (enrollments || []).filter((e) => e.status !== "completed");
+  const completed = (enrollments || []).filter((e) => e.status === "completed");
+
+  return (
+    <>
+      <h1 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 8 }}>
+        Bonjour{firstName ? ` ${firstName}` : ""}
+      </h1>
+      <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>
+        Retrouvez vos formations et continuez là où vous vous êtes arrêté.
+      </p>
+
+      <div className="stats-grid" style={{ marginBottom: 32 }}>
+        <div style={statCardStyle}>
+          <strong style={{ fontSize: "1.6rem" }}>{inProgress.length}</strong>
+          <span style={{ color: "var(--text-light)", fontSize: "0.85rem" }}>Formations en cours</span>
+        </div>
+        <div style={statCardStyle}>
+          <strong style={{ fontSize: "1.6rem" }}>{completed.length}</strong>
+          <span style={{ color: "var(--text-light)", fontSize: "0.85rem" }}>Formations terminées</span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
+        <Link href="/catalogue" style={primaryBtnStyle}>
+          <i className="fas fa-book-open" /> Catalogue
+        </Link>
+        <Link href="/mes-formations" style={secondaryBtnStyle}>
+          <i className="fas fa-play-circle" /> Mes formations
+        </Link>
+      </div>
+
+      <h2 style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: 16 }}>Continuer</h2>
+      {inProgress.length > 0 ? (
+        <div className="cards-grid">
+          {inProgress.map((e) => {
+            const raw = e.courses as unknown;
+            const c = (Array.isArray(raw) ? raw[0] : raw) as
+              | { id: string; title: string; icon: string | null; gradient: string | null }
+              | null;
+            if (!c) return null;
+            const p = Number(e.progress_percent);
+            return (
+              <Link key={c.id} href={`/player/${c.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", overflow: "hidden", boxShadow: "var(--shadow)" }}>
+                  <div style={{ height: 100, background: c.gradient || "linear-gradient(135deg, #4f46e5, #06b6d4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <i className={`fas ${c.icon || "fa-book"}`} style={{ fontSize: "2rem", color: "rgba(255,255,255,0.35)" }} />
+                  </div>
+                  <div style={{ padding: 16 }}>
+                    <h3 style={{ fontSize: "0.95rem", fontWeight: 600, marginBottom: 10 }}>{c.title}</h3>
+                    <div style={{ height: 8, background: "var(--border)", borderRadius: 10, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${p}%`, background: "var(--primary)", borderRadius: 10 }} />
+                    </div>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-light)", marginTop: 8 }}>{Math.round(p)}%</p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <p style={{ color: "var(--text-light)" }}>
+          Aucune formation en cours.{" "}
+          <Link href="/catalogue" style={{ color: "var(--primary)", fontWeight: 600 }}>
+            Parcourir le catalogue
+          </Link>
+        </p>
+      )}
+    </>
+  );
+}
+
+async function AdminHome() {
   const supabase = await createServerSupabase();
 
   const [
@@ -48,7 +157,6 @@ export default async function DashboardPage() {
         Bienvenue ! Voici un aperçu de votre plateforme.
       </p>
 
-      {/* Stats Grid */}
       <div className="stats-grid" style={{ marginBottom: 32 }}>
         {stats.map((s) => (
           <div
@@ -88,7 +196,6 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      {/* Recent Activity */}
       <div
         style={{
           background: "var(--bg-card)",
@@ -160,3 +267,33 @@ export default async function DashboardPage() {
     </>
   );
 }
+
+const statCardStyle: React.CSSProperties = {
+  background: "var(--bg-card)",
+  borderRadius: "var(--radius)",
+  padding: 24,
+  boxShadow: "var(--shadow)",
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+};
+
+const primaryBtnStyle: React.CSSProperties = {
+  padding: "10px 20px",
+  borderRadius: "var(--radius-sm)",
+  background: "var(--primary)",
+  color: "#fff",
+  textDecoration: "none",
+  fontWeight: 600,
+  fontSize: "0.9rem",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 8,
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  ...primaryBtnStyle,
+  background: "var(--bg-card)",
+  color: "var(--text)",
+  border: "1px solid var(--border)",
+};

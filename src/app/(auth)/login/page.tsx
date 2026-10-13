@@ -1,8 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+
+function messageFromAuthParams(raw: string) {
+  const params = new URLSearchParams(raw.startsWith("?") || raw.startsWith("#") ? raw.slice(1) : raw);
+  const err = params.get("error");
+  const code = params.get("error_code");
+  if (code === "otp_expired" || err === "access_denied") {
+    return "Le lien de confirmation est invalide ou a expire. Ouvre https://lou-academy.vercel.app (pas localhost), inscris-toi ou reconnecte-toi, et utilise un nouvel email de confirmation.";
+  }
+  if (err === "confirmation") {
+    return "La confirmation a echoue. Utilise un lien recent envoye depuis lou-academy.vercel.app.";
+  }
+  return "";
+}
+
+function humanAuthError(message: string) {
+  const lower = message.toLowerCase();
+  if (lower.includes("failed to fetch") || lower.includes("fetch failed") || lower.includes("network")) {
+    return "Impossible de joindre la base. Le projet Supabase est probablement en pause ou supprime. Restaure-le sur supabase.com puis reessaie.";
+  }
+  if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
+    return "Email ou mot de passe incorrect.";
+  }
+  if (lower.includes("email not confirmed")) {
+    return "Confirme d'abord ton email (lien recu dans ta boite mail), puis reconnecte-toi.";
+  }
+  if (lower.includes("rate limit")) {
+    return "Trop de tentatives. Attends quelques minutes, ou cree le compte dans Supabase (Authentication > Add user).";
+  }
+  return message;
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +44,13 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const fromQuery = messageFromAuthParams(window.location.search);
+    const fromHash = messageFromAuthParams(window.location.hash.replace(/^#/, ""));
+    const message = fromQuery || fromHash;
+    if (message) setError(message);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +65,7 @@ export default function LoginPage() {
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: { first_name: firstName, last_name: lastName, role: "learner" },
         },
       });
@@ -57,23 +95,6 @@ export default function LoginPage() {
     router.push("/");
     router.refresh();
   };
-
-  function humanAuthError(message: string) {
-    const lower = message.toLowerCase();
-    if (lower.includes("failed to fetch") || lower.includes("fetch failed") || lower.includes("network")) {
-      return "Impossible de joindre la base. Le projet Supabase est probablement en pause ou supprime. Restaure-le sur supabase.com puis reessaie.";
-    }
-    if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
-      return "Email ou mot de passe incorrect.";
-    }
-    if (lower.includes("email not confirmed")) {
-      return "Confirme d'abord ton email (lien recu dans ta boite mail), puis reconnecte-toi.";
-    }
-    if (lower.includes("rate limit")) {
-      return "Trop de tentatives. Attends quelques minutes, ou cree le compte dans Supabase (Authentication > Add user).";
-    }
-    return message;
-  }
 
   return (
     <div className="login-container">

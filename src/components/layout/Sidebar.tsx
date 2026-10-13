@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/types/database";
 
 const menuItems = [
-  { path: "/", icon: "fa-th-large", label: "Tableau de bord" },
+  { path: "/", icon: "fa-th-large", label: "Tableau de bord", roles: ["admin", "creator"] },
+  { path: "/", icon: "fa-home", label: "Accueil", roles: ["learner"] },
   { path: "/catalogue", icon: "fa-book-open", label: "Catalogue" },
   { path: "/mes-formations", icon: "fa-play-circle", label: "Mes formations" },
   { path: "/studio", icon: "fa-plus-circle", label: "Course Studio", roles: ["admin", "creator"] },
@@ -118,7 +119,7 @@ export default function Sidebar({ profile, open, onClose }: { profile: Profile; 
                 : pathname.startsWith(item.path);
             return (
               <li
-                key={item.path}
+                key={`${item.path}-${item.label}`}
                 onClick={() => navigate(item.path)}
                 style={{
                   display: "flex",

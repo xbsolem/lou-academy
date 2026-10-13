@@ -13,6 +13,15 @@ export default async function StudioCoursePage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (!profile || !["admin", "creator"].includes(profile.role)) {
+    redirect("/");
+  }
+
   const { data: course } = await supabase
     .from("courses")
     .select("*")
