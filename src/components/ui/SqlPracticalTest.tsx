@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SqlExercise from "./SqlExercise";
 import type { SqlExerciseData } from "@/lib/sql-exercise-data";
-import { createSqlSandbox } from "@/lib/sql-sandbox";
+import { createSqlSandbox, describeSqlInitError } from "@/lib/sql-sandbox";
 import {
   PRACTICAL_MAX_SCORE,
   PRACTICAL_PASSING_SCORE,
@@ -116,8 +116,8 @@ export default function SqlPracticalTest({
         } else {
           taskResults.push({ passed: false, points: 0, error: checked.error });
         }
-      } catch {
-        taskResults.push({ passed: false, points: 0, error: "Impossible d'évaluer cet exercice." });
+      } catch (err) {
+        taskResults.push({ passed: false, points: 0, error: describeSqlInitError(err) });
       }
     }
     const passed = total >= passingScore;

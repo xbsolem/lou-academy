@@ -7,12 +7,14 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/copy-sql-wasm.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed:sql-debutants": "node scripts/generate-sql-debutants-seed.mjs"
+    "seed:sql-debutants": "node scripts/generate-sql-debutants-seed.mjs",
+    "copy:sql-wasm": "node scripts/copy-sql-wasm.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

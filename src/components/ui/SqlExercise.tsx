@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { SqlExerciseData } from "@/lib/sql-exercise-data";
-import { createSqlSandbox, type QueryResult, type SqlSandbox } from "@/lib/sql-sandbox";
+import { createSqlSandbox, describeSqlInitError, type QueryResult, type SqlSandbox } from "@/lib/sql-sandbox";
 import { highlightSql } from "@/lib/sql-highlight";
 
 const btnBase: React.CSSProperties = {
@@ -64,21 +64,28 @@ export default function SqlExercise({
   const sandboxRef = useRef<SqlSandbox | null>(null);
   const successOnce = useRef(false);
   const highlightRef = useRef<HTMLPreElement | null>(null);
+  const initGen = useRef(0);
   const supabase = createClient();
 
   const initDb = useCallback(async () => {
+    const gen = ++initGen.current;
+    setReady(false);
+    sandboxRef.current = null;
     try {
-      sandboxRef.current = await createSqlSandbox(exerciseData.setupSql || "");
+      const sandbox = await createSqlSandbox(exerciseData.setupSql || "");
+      if (gen !== initGen.current) return;
+      sandboxRef.current = sandbox;
       setReady(true);
       setError(null);
-    } catch {
-      setError("Erreur d'initialisation du moteur SQL.");
+    } catch (err) {
+      if (gen !== initGen.current) return;
+      setError(describeSqlInitError(err));
       setReady(false);
     }
-  }, [exerciseData.setupSql]);
+  }, [exerciseData.setupSql, lessonId]);
 
   useEffect(() => {
-    initDb();
+    void initDb();
   }, [initDb]);
 
   useEffect(() => {
@@ -91,7 +98,7 @@ export default function SqlExercise({
     setShowHint(-1);
     setShowSolution(false);
     successOnce.current = false;
-  }, [exerciseData.starterQuery, exerciseData.instructions, controlledQuery]);
+  }, [exerciseData.starterQuery, exerciseData.instructions, lessonId, controlledQuery]);
 
   const persistAttempt = async (payload: Record<string, unknown>, succeeded: boolean) => {
     if (isPreview) return;
@@ -166,6 +173,8 @@ export default function SqlExercise({
     setSuccess(false);
     setShowHint(-1);
     setShowSolution(false);
+    successOnce.current = false;
+    void initDb();
   };
 
   const examMode = mode === "exam";

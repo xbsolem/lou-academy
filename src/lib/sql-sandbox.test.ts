@@ -1,8 +1,13 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import initSqlJs from "sql.js";
 import {
+  SqlInitError,
   SqlSandbox,
   assertSafeSelect,
+  createSqlSandbox,
+  describeSqlInitError,
   matchExerciseResult,
   translateSqliteError,
   type SqlModule,
@@ -216,5 +221,61 @@ describe("SQL result matching", () => {
       orderRequired: false,
     });
     expect(match).toBe(true);
+  });
+});
+
+describe("sql-debutants setupSql", () => {
+  const db = JSON.parse(
+    readFileSync(join(process.cwd(), "src/content/sql-debutants/db.json"), "utf8")
+  ) as { setupSql: string };
+
+  it("allows DROP/CREATE in teacher setupSql then SELECT * FROM clients", async () => {
+    expect(db.setupSql).toMatch(/DROP TABLE IF EXISTS/i);
+    const real = await createSqlSandbox(db.setupSql);
+    const result = real.execute("SELECT * FROM clients");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.result.columns.map((c) => c.toLowerCase())).toEqual([
+      "id",
+      "prenom",
+      "nom",
+      "age",
+      "ville",
+    ]);
+    expect(result.result.values).toHaveLength(8);
+  });
+
+  it("still rejects dangerous learner SQL against the real boutique schema", async () => {
+    const real = await createSqlSandbox(db.setupSql);
+    const dangerous = [
+      "DROP TABLE clients",
+      "DELETE FROM clients",
+      "UPDATE clients SET ville = 'x'",
+      "INSERT INTO clients (id, prenom, nom, age, ville) VALUES (99, 'A', 'B', 1, 'Paris')",
+      "CREATE TABLE hack (id INTEGER)",
+      "ALTER TABLE clients ADD COLUMN secret TEXT",
+    ];
+    for (const sql of dangerous) {
+      const result = real.execute(sql);
+      expect(result.ok, sql).toBe(false);
+      if (!result.ok) expect(result.code).toBe("forbidden");
+    }
+    const after = real.execute("SELECT COUNT(*) AS n FROM clients");
+    expect(after.ok).toBe(true);
+    if (after.ok) expect(Number(after.result.values[0][0])).toBe(8);
+  });
+
+  it("surfaces a schema error, not a wasm error, when setupSql is invalid", () => {
+    expect(() => new SqlSandbox(SQL, "THIS IS NOT SQL")).toThrow(SqlInitError);
+    try {
+      new SqlSandbox(SQL, "THIS IS NOT SQL");
+    } catch (err) {
+      expect(err).toBeInstanceOf(SqlInitError);
+      if (err instanceof SqlInitError) {
+        expect(err.kind).toBe("schema");
+        expect(describeSqlInitError(err)).toMatch(/schéma SQL/i);
+        expect(describeSqlInitError(err).toLowerCase()).not.toContain("initialisation du moteur");
+      }
+    }
   });
 });

@@ -75,6 +75,32 @@ export type SandboxErrorCode =
   | "mismatch"
   | "generic";
 
+export const SQL_WASM_PUBLIC_PATH = "/sql-wasm.wasm";
+
+export type SqlInitErrorKind = "wasm" | "schema";
+
+export class SqlInitError extends Error {
+  readonly kind: SqlInitErrorKind;
+
+  constructor(kind: SqlInitErrorKind, message: string) {
+    super(message);
+    this.name = "SqlInitError";
+    this.kind = kind;
+  }
+}
+
+export function describeSqlInitError(err: unknown): string {
+  if (err instanceof SqlInitError) return err.message;
+  const raw = err instanceof Error ? err.message : String(err);
+  if (/wasm|locateFile|WebAssembly|fetch|Failed to load|network|404/i.test(raw)) {
+    return "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez.";
+  }
+  if (/syntax|no such|constraint|table|SQL/i.test(raw)) {
+    return "Impossible de préparer la base de l'exercice. Le schéma SQL (tables et données) contient une erreur.";
+  }
+  return "Impossible de préparer l'exercice SQL. Actualisez la page, puis réessayez.";
+}
+
 export interface SandboxFailure {
   ok: false;
   error: string;
@@ -104,15 +130,69 @@ export type VerifyResult = VerifySuccess | VerifyFailure;
 
 let enginePromise: Promise<SqlModule> | null = null;
 
+type InitSqlJsFn = (config?: {
+  locateFile?: (filename: string, prefix?: string) => string;
+  wasmBinary?: ArrayBuffer | Uint8Array;
+}) => Promise<SqlModule>;
+
+function resolveInitSqlJs(mod: unknown): InitSqlJsFn {
+  const rec = mod as { default?: unknown };
+  const candidate = rec?.default ?? mod;
+  if (typeof candidate !== "function") {
+    throw new SqlInitError(
+      "wasm",
+      "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez."
+    );
+  }
+  return candidate as InitSqlJsFn;
+}
+
+async function browserEngineConfig(): Promise<{
+  locateFile: (filename: string) => string;
+  wasmBinary: Uint8Array;
+}> {
+  try {
+    const response = await fetch(SQL_WASM_PUBLIC_PATH);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const wasmBinary = new Uint8Array(await response.arrayBuffer());
+    if (wasmBinary.byteLength < 1024) {
+      throw new Error("WASM trop petit");
+    }
+    return {
+      wasmBinary,
+      // Browser sql.js asks for sql-wasm-browser.wasm; we vendor a single identical file.
+      locateFile: () => SQL_WASM_PUBLIC_PATH,
+    };
+  } catch {
+    throw new SqlInitError(
+      "wasm",
+      "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez."
+    );
+  }
+}
+
 export async function loadSqlEngine(): Promise<SqlModule> {
   if (!enginePromise) {
     enginePromise = (async () => {
-      const initSqlJs = (await import("sql.js")).default;
-      const isBrowser = typeof window !== "undefined";
-      return initSqlJs(
-        isBrowser ? { locateFile: (file: string) => `https://sql.js.org/dist/${file}` } : undefined
-      ) as Promise<SqlModule>;
-    })();
+      try {
+        const initSqlJs = resolveInitSqlJs(await import("sql.js"));
+        if (typeof window !== "undefined") {
+          return initSqlJs(await browserEngineConfig());
+        }
+        return initSqlJs();
+      } catch (err) {
+        if (err instanceof SqlInitError) throw err;
+        throw new SqlInitError(
+          "wasm",
+          "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez."
+        );
+      }
+    })().catch((err) => {
+      enginePromise = null;
+      throw err;
+    });
   }
   return enginePromise;
 }
@@ -432,7 +512,16 @@ export class SqlSandbox {
     const db = new SQL.Database();
     try {
       if (setupSql && setupSql.trim()) {
-        db.run(setupSql);
+        // Teacher schema (DROP/CREATE/INSERT) is trusted and must run here.
+        // Learner queries go through assertSafeSelect() and stay SELECT-only.
+        try {
+          db.run(setupSql);
+        } catch {
+          throw new SqlInitError(
+            "schema",
+            "Impossible de préparer la base de l'exercice. Le schéma SQL (tables et données) contient une erreur."
+          );
+        }
       }
       this.snapshot = db.export();
     } finally {
