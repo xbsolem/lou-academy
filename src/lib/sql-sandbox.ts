@@ -76,6 +76,8 @@ export type SandboxErrorCode =
   | "generic";
 
 export const SQL_WASM_PUBLIC_PATH = "/sql-wasm.wasm";
+export const SQL_JS_PUBLIC_PATH = "/sql-wasm-browser.js";
+const SQL_JS_ASSET_VERSION = "1.14.2";
 
 export type SqlInitErrorKind = "wasm" | "schema";
 
@@ -147,12 +149,59 @@ function resolveInitSqlJs(mod: unknown): InitSqlJsFn {
   return candidate as InitSqlJsFn;
 }
 
+function assetUrl(path: string): string {
+  return `${path}?v=${SQL_JS_ASSET_VERSION}`;
+}
+
+function sameOriginWasmUrl(filename: string): string {
+  return assetUrl(filename.endsWith(".wasm") ? `/${filename.split("/").pop()}` : SQL_WASM_PUBLIC_PATH);
+}
+
+async function loadClassicScript(src: string): Promise<void> {
+  const w = window as unknown as { initSqlJs?: InitSqlJsFn };
+  if (typeof w.initSqlJs === "function") return;
+  await new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector("script[data-lou-sql-js]") as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("sql.js script")), { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.dataset.louSqlJs = "1";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("sql.js script"));
+    document.head.appendChild(script);
+  });
+  if (typeof w.initSqlJs !== "function") {
+    throw new Error("initSqlJs manquant");
+  }
+}
+
+async function loadBrowserInitSqlJs(): Promise<InitSqlJsFn> {
+  try {
+    await loadClassicScript(assetUrl(SQL_JS_PUBLIC_PATH));
+    const w = window as unknown as { initSqlJs?: InitSqlJsFn };
+    if (typeof w.initSqlJs !== "function") {
+      throw new Error("initSqlJs manquant");
+    }
+    return w.initSqlJs;
+  } catch {
+    throw new SqlInitError(
+      "wasm",
+      "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez."
+    );
+  }
+}
+
 async function browserEngineConfig(): Promise<{
   locateFile: (filename: string) => string;
   wasmBinary: Uint8Array;
 }> {
   try {
-    const response = await fetch(SQL_WASM_PUBLIC_PATH);
+    const response = await fetch(assetUrl(SQL_WASM_PUBLIC_PATH));
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -162,10 +211,11 @@ async function browserEngineConfig(): Promise<{
     }
     return {
       wasmBinary,
-      // Browser sql.js asks for sql-wasm-browser.wasm; we vendor a single identical file.
-      locateFile: () => SQL_WASM_PUBLIC_PATH,
+      // Browser build requests sql-wasm-browser.wasm; both names are vendored same-origin.
+      locateFile: (filename: string) => sameOriginWasmUrl(filename),
     };
-  } catch {
+  } catch (err) {
+    if (err instanceof SqlInitError) throw err;
     throw new SqlInitError(
       "wasm",
       "Impossible de charger le moteur SQL. Actualisez la page, puis réessayez."
@@ -177,10 +227,12 @@ export async function loadSqlEngine(): Promise<SqlModule> {
   if (!enginePromise) {
     enginePromise = (async () => {
       try {
-        const initSqlJs = resolveInitSqlJs(await import("sql.js"));
         if (typeof window !== "undefined") {
+          // Classic script from /public: Next/Turbopack must not rewrite sql.js (`module = undefined`).
+          const initSqlJs = await loadBrowserInitSqlJs();
           return initSqlJs(await browserEngineConfig());
         }
+        const initSqlJs = resolveInitSqlJs(await import("sql.js"));
         return initSqlJs();
       } catch (err) {
         if (err instanceof SqlInitError) throw err;
