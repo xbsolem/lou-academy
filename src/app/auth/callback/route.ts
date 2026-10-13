@@ -1,12 +1,24 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+function safeNextPath(raw: string | null) {
+  if (!raw || !raw.startsWith("/")) return "/";
+  return raw;
+}
+
+function isRecoveryFlow(searchParams: URLSearchParams, next: string) {
+  return searchParams.get("type") === "recovery" || next.startsWith("/reset-password");
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
   const authError = searchParams.get("error");
-  let next = searchParams.get("next") ?? "/";
-  if (!next.startsWith("/")) next = "/";
+  const type = searchParams.get("type");
+  let next = safeNextPath(searchParams.get("next"));
+  const recovery = isRecoveryFlow(searchParams, next);
+  if (recovery) next = "/reset-password";
 
   const forwardedHost = request.headers.get("x-forwarded-host");
   const appOrigin =
@@ -14,8 +26,12 @@ export async function GET(request: NextRequest) {
       ? `https://${forwardedHost}`
       : origin;
 
-  if (authError || !code) {
-    return NextResponse.redirect(`${appOrigin}/login?error=confirmation`);
+  const failUrl = recovery
+    ? `${appOrigin}/reset-password?error=invalid`
+    : `${appOrigin}/login?error=confirmation`;
+
+  if (authError || (!code && !tokenHash)) {
+    return NextResponse.redirect(failUrl);
   }
 
   const successRedirect = NextResponse.redirect(`${appOrigin}${next}`);
@@ -37,10 +53,23 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const otpType =
+    type === "recovery" || recovery
+      ? "recovery"
+      : type === "signup" || type === "invite" || type === "magiclink" || type === "email_change"
+        ? type
+        : "email";
+
+  const { error } = code
+    ? await supabase.auth.exchangeCodeForSession(code)
+    : await supabase.auth.verifyOtp({
+        type: otpType,
+        token_hash: tokenHash!,
+      });
+
   if (!error) {
     return successRedirect;
   }
 
-  return NextResponse.redirect(`${appOrigin}/login?error=confirmation`);
+  return NextResponse.redirect(failUrl);
 }

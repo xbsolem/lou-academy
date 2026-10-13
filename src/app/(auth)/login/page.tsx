@@ -9,10 +9,10 @@ function messageFromAuthParams(raw: string) {
   const err = params.get("error");
   const code = params.get("error_code");
   if (code === "otp_expired" || err === "access_denied") {
-    return "Le lien de confirmation est invalide ou a expire. Ouvre https://lou-academy.vercel.app (pas localhost), inscris-toi ou reconnecte-toi, et utilise un nouvel email de confirmation.";
+    return "Ce lien est invalide ou a expiré. Ouvre https://lou-academy.vercel.app (pas localhost) et demande un nouvel email (confirmation ou mot de passe oublié).";
   }
   if (err === "confirmation") {
-    return "La confirmation a echoue. Utilise un lien recent envoye depuis lou-academy.vercel.app.";
+    return "Ce lien n'est plus valide ou a déjà été utilisé. Connecte-toi si ton compte est actif, ou demande un nouvel email (confirmation ou mot de passe oublié).";
   }
   return "";
 }
@@ -26,10 +26,13 @@ function humanAuthError(message: string) {
     return "Email ou mot de passe incorrect.";
   }
   if (lower.includes("email not confirmed")) {
-    return "Confirme d'abord ton email (lien recu dans ta boite mail), puis reconnecte-toi.";
+    return "Confirme d'abord ton email (boite de reception et spam), puis reconnecte-toi. Tu peux aussi renvoyer l'email ci-dessous.";
   }
   if (lower.includes("rate limit")) {
-    return "Trop de tentatives. Attends quelques minutes, ou cree le compte dans Supabase (Authentication > Add user).";
+    return "Trop de tentatives (limite d'emails Supabase). Attends quelques minutes, ou confirme le compte a la main dans Supabase (Authentication > Users).";
+  }
+  if (lower.includes("already") && lower.includes("confirm")) {
+    return "Cet email est deja confirme. Connecte-toi avec ton mot de passe.";
   }
   return message;
 }
@@ -41,13 +44,33 @@ export default function LoginPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
   useEffect(() => {
+    const hashRaw = window.location.hash.replace(/^#/, "");
+    const hashParams = new URLSearchParams(hashRaw);
+    if (hashParams.get("type") === "recovery" || hashParams.get("access_token")) {
+      window.location.replace(`/reset-password${window.location.hash}`);
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("code") || params.get("token_hash") || params.get("type") === "recovery") {
+      params.set("next", "/reset-password");
+      window.location.replace(`/auth/callback?${params.toString()}`);
+      return;
+    }
+
+    if (params.get("reset") === "success") {
+      setSuccess("Mot de passe mis à jour. Connecte-toi avec ton nouveau mot de passe.");
+    }
+
     const fromQuery = messageFromAuthParams(window.location.search);
-    const fromHash = messageFromAuthParams(window.location.hash.replace(/^#/, ""));
+    const fromHash = messageFromAuthParams(hashRaw);
     const message = fromQuery || fromHash;
     if (message) setError(message);
   }, []);
@@ -75,7 +98,12 @@ export default function LoginPage() {
         return;
       }
       if (!data.session) {
-        setSuccess("Compte cree. Verifiez votre email pour confirmer, puis connectez-vous.");
+        const alreadyRegistered = (data.user?.identities?.length ?? 1) === 0;
+        setSuccess(
+          alreadyRegistered
+            ? "Ce compte existe deja. Si l'email n'est pas confirme, renvoie la confirmation ci-dessous et verifie le dossier spam."
+            : "Compte cree. Verifie ta boite mail (et le dossier spam) pour confirmer, puis connecte-toi."
+        );
         setIsSignUp(false);
         setLoading(false);
         return;
@@ -94,6 +122,50 @@ export default function LoginPage() {
 
     router.push("/");
     router.refresh();
+  };
+
+  const handleResend = async () => {
+    if (!email) {
+      setError("Saisis ton email pour renvoyer la confirmation.");
+      return;
+    }
+    setResending(true);
+    setError("");
+    setSuccess("");
+    const supabase = createClient();
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(humanAuthError(error.message));
+    } else {
+      setSuccess("Email de confirmation renvoye. Verifie ta boite et le dossier spam.");
+    }
+    setResending(false);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Saisis ton email pour réinitialiser le mot de passe.");
+      return;
+    }
+    setResetting(true);
+    setError("");
+    setSuccess("");
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+    });
+    if (error) {
+      setError(humanAuthError(error.message));
+    } else {
+      setSuccess("Email de réinitialisation envoyé");
+    }
+    setResetting(false);
   };
 
   return (
@@ -231,7 +303,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div style={{ marginBottom: "24px" }}>
+          <div style={{ marginBottom: isSignUp ? "24px" : "8px" }}>
             <label
               style={{
                 display: "block",
@@ -259,6 +331,32 @@ export default function LoginPage() {
               }}
             />
           </div>
+          {!isSignUp && (
+            <p
+              style={{
+                textAlign: "right",
+                marginBottom: "24px",
+                fontSize: "0.85rem",
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={loading || resetting}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#4f46e5",
+                  cursor: resetting || loading ? "not-allowed" : "pointer",
+                  fontWeight: 600,
+                  fontFamily: "inherit",
+                  padding: 0,
+                }}
+              >
+                {resetting ? "Envoi..." : "Mot de passe oublié"}
+              </button>
+            </p>
+          )}
 
           <button
             type="submit"
@@ -314,6 +412,33 @@ export default function LoginPage() {
             {isSignUp ? "Se connecter" : "S'inscrire"}
           </button>
         </p>
+        {!isSignUp && (
+          <p
+            style={{
+              textAlign: "center",
+              marginTop: "12px",
+              fontSize: "0.85rem",
+              color: "#64748b",
+            }}
+          >
+            Pas reçu le mail ?{" "}
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={loading || resending}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#4f46e5",
+                cursor: resending || loading ? "not-allowed" : "pointer",
+                fontWeight: 600,
+                fontFamily: "inherit",
+              }}
+            >
+              {resending ? "Envoi..." : "Renvoyer l'email de confirmation"}
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
