@@ -1,0 +1,445 @@
+{
+  "position": 2,
+  "title": "Filtrer",
+  "description": "WHERE, opérateurs, AND / OR, et la différence entre texte et nombres.",
+  "lessons": [
+    {
+      "position": 0,
+      "title": "WHERE : garder certaines lignes",
+      "description": "SELECT choisit les colonnes. WHERE choisit les lignes.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez placer WHERE après FROM pour ne garder que les fiches qui intéressent."
+        },
+        {
+          "block_type": "heading",
+          "content": "Le filtre de l'armoire"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT * FROM clients; sort les 8 fiches. Souvent, on n'en veut qu'une partie : les Parisiens, les majeurs, les plus de 25 ans. WHERE pose la condition. Seules les lignes « vraies » restent."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT *\nFROM clients\nWHERE age >= 18;"
+        },
+        {
+          "block_type": "text",
+          "content": "Manon a 17 ans : elle disparaît du résultat. Les 7 autres restent. La table dans l'armoire, elle, ne change pas. C'est encore une photocopie filtrée."
+        },
+        {
+          "block_type": "callout",
+          "content": "Ordre fixe : SELECT, puis FROM, puis WHERE. Inverser FROM et WHERE provoque une erreur."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "WHERE = « seulement si… ». Il réduit le nombre de lignes, pas le nombre de colonnes."
+        }
+      ]
+    },
+    {
+      "position": 1,
+      "title": "Les opérateurs de comparaison",
+      "description": "=, <>, >, <, >=, <= : comparer une colonne à une valeur.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous reconnaissez les six comparaisons de base et vous savez que = teste l'égalité, pas « mettre dans »."
+        },
+        {
+          "block_type": "heading",
+          "content": "Le vocabulaire"
+        },
+        {
+          "block_type": "text",
+          "content": "= égal. <> différent (parfois écrit !=). > strictement plus grand. < strictement plus petit. >= plus grand ou égal. <= plus petit ou égal.\n\nage >= 18 inclut les gens de 18 ans. age > 18 les exclut. Sur nos données, Manon (17) est hors des deux. Emma (24) est dans les deux."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT prenom, age\nFROM clients\nWHERE age > 25;"
+        },
+        {
+          "block_type": "text",
+          "content": "Hugo 28, Nathan 35, Lucas 31, Louis 40. Léa a 22 : trop jeune pour ce filtre. Le 25 n'a pas de quotes : c'est un nombre."
+        },
+        {
+          "block_type": "callout",
+          "content": "WHERE age = 24 trouve Emma. WHERE age = '24' peut marcher selon l'outil, mais apprenez la règle : nombres sans quotes, textes avec quotes."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "La colonne à gauche, l'opérateur au milieu, la valeur à droite : age >= 18."
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "title": "AND, OR, texte et nombres",
+      "description": "Combiner des conditions. Mettre les villes entre quotes simples.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous combinez deux filtres avec AND (les deux) ou OR (au moins un), et vous entourez le texte de quotes simples."
+        },
+        {
+          "block_type": "heading",
+          "content": "Texte = quotes simples"
+        },
+        {
+          "block_type": "text",
+          "content": "Paris est du texte. On écrit 'Paris', avec des apostrophes droites. Sans quotes, SQL croit que Paris est un nom de colonne. Erreur.\n\nLes nombres : 18, 25, 50. Pas de quotes."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT *\nFROM clients\nWHERE ville = 'Paris';"
+        },
+        {
+          "block_type": "heading",
+          "content": "AND : les deux conditions"
+        },
+        {
+          "block_type": "text",
+          "content": "AND est un « et ». Les deux doivent être vraies. Paris ET plus de 25 ans : il ne reste que Louis (40, Paris). Emma est à Paris mais a 24 ans. Hugo a 28 ans mais habite Lyon."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT *\nFROM clients\nWHERE ville = 'Paris'\n  AND age > 25;"
+        },
+        {
+          "block_type": "heading",
+          "content": "OR : au moins une"
+        },
+        {
+          "block_type": "text",
+          "content": "OR est un « ou ». Paris OU plus de 25 ans : on garde les Parisiens et les plus de 25, même s'ils n'habitent pas Paris. C'est plus large. AND resserre. OR élargit."
+        },
+        {
+          "block_type": "callout",
+          "content": "'Paris' n'est pas 'paris'. La casse compte dans les données. Recopiez exactement le mot de la table."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "Texte entre quotes simples. AND = les deux. OR = l'un ou l'autre. Exemple type : WHERE ville = 'Paris' AND age > 25."
+        }
+      ]
+    },
+    {
+      "position": 3,
+      "title": "Exercice : les majeurs",
+      "description": "Filtrer : age >= 18.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Manon a 17 ans. Un WHERE bien choisi la laisse dans l'armoire et n'affiche que les majeurs."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez tous les clients majeurs : age supérieur ou égal à 18. Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM clients WHERE ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "2",
+                "Hugo",
+                "Bernard",
+                "28",
+                "Lyon"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Manon a 17 ans : elle ne doit pas apparaître.",
+              "WHERE age >= 18"
+            ],
+            "solution": "SELECT * FROM clients WHERE age >= 18;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "title": "Exercice : les clients de Paris",
+      "description": "Filtrer un texte : ville = 'Paris'.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Quotes simples autour de Paris. Sans quotes, SQL cherche une colonne qui n'existe pas."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez tous les clients qui habitent Paris. Toutes les colonnes. Pensez aux quotes autour du texte.",
+            "starterQuery": "SELECT * FROM clients WHERE ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "La colonne s'appelle ville.",
+              "WHERE ville = 'Paris'"
+            ],
+            "solution": "SELECT * FROM clients WHERE ville = 'Paris';",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "title": "Exercice : plus de 25 ans",
+      "description": "Filtrer : age > 25.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Strictement supérieur à 25 : Emma (24) sort, Hugo (28) reste."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Affichez tous les clients dont l'âge est strictement supérieur à 25. Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM clients WHERE ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "2",
+                "Hugo",
+                "Bernard",
+                "28",
+                "Lyon"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Strictement supérieur : utilisez > et pas >=.",
+              "WHERE age > 25"
+            ],
+            "solution": "SELECT * FROM clients WHERE age > 25;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "title": "Exercice : Paris et plus de 25 ans",
+      "description": "Combiner ville et âge avec AND.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Les deux conditions en même temps. Louis est le seul Parisien de plus de 25 ans."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Affichez les clients qui habitent Paris ET ont plus de 25 ans. Les deux conditions doivent être vraies. Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM clients WHERE ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Reliez les deux tests avec AND.",
+              "WHERE ville = 'Paris' AND age > 25"
+            ],
+            "solution": "SELECT * FROM clients WHERE ville = 'Paris' AND age > 25;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    }
+  ]
+}

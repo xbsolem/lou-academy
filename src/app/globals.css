@@ -524,3 +524,58 @@ body {
     gap: 8px;
   }
 }
+
+/* SQL lab */
+.sql-lab {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(280px, 1.4fr) minmax(240px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.sql-editor {
+  position: relative;
+  min-height: 160px;
+  background: #1e293b;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.sql-editor-highlight,
+.sql-editor-textarea {
+  margin: 0;
+  padding: 16px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  tab-size: 2;
+}
+.sql-editor-highlight {
+  position: absolute;
+  inset: 0;
+  color: #e2e8f0;
+  pointer-events: none;
+  overflow: auto;
+}
+.sql-editor-textarea {
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+  background: transparent;
+  color: transparent;
+  caret-color: #e2e8f0;
+  border: none;
+  resize: vertical;
+  outline: none;
+}
+.sql-kw { color: #818cf8; font-weight: 600; }
+.sql-str { color: #34d399; }
+.sql-num { color: #f59e0b; }
+.sql-cm { color: #94a3b8; font-style: italic; }
+
+@media (max-width: 1024px) {
+  .sql-lab {
+    grid-template-columns: 1fr;
+  }
+}

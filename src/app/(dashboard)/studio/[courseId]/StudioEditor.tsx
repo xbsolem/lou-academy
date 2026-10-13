@@ -3,7 +3,8 @@
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import type { Course, Module, Lesson } from "@/types/database";
+import type { Course, Module, Lesson, LessonType } from "@/types/database";
+import { DEFAULT_SQL_EXERCISE, serializeSqlExerciseData } from "@/lib/sql-exercise-data";
 import ModuleList from "./ModuleList";
 import LessonEditor from "./LessonEditor";
 import AiWizard from "./AiWizard";
@@ -74,16 +75,30 @@ export default function StudioEditor({
     await refresh();
   };
 
-  const addLesson = async (moduleId: string) => {
+  const addLesson = async (moduleId: string, lessonType: LessonType = "lesson") => {
     const mod = modules.find((m) => m.id === moduleId);
     const maxPos = mod && mod.lessons.length > 0 ? Math.max(...mod.lessons.map((l) => l.position)) : -1;
-    const { error } = await supabase.from("lessons").insert({
+    const titles: Record<LessonType, string> = {
+      lesson: "Nouvelle leçon",
+      quiz: "Nouveau quiz",
+      sql_exercise: "Exercice SQL",
+    };
+    const { data, error } = await supabase.from("lessons").insert({
       module_id: moduleId,
-      title: "Nouvelle lecon",
-      lesson_type: "lesson",
+      title: titles[lessonType],
+      lesson_type: lessonType,
       position: maxPos + 1,
-    });
-    if (!error) await refresh();
+    }).select("id").single();
+    if (error) return;
+    if (lessonType === "sql_exercise" && data) {
+      await supabase.from("content_blocks").insert({
+        lesson_id: data.id,
+        block_type: "sql_exercise",
+        content: serializeSqlExerciseData(DEFAULT_SQL_EXERCISE),
+        position: 0,
+      });
+    }
+    await refresh();
   };
 
   const deleteLesson = async (id: string) => {

@@ -93,6 +93,7 @@ export interface LessonProgress {
   started_at: string | null;
   completed_at: string | null;
   updated_at: string;
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface Quiz {

@@ -1,0 +1,280 @@
+{
+  "position": 1,
+  "title": "Premières requêtes",
+  "description": "SELECT, FROM, l'étoile, puis le choix de colonnes précises.",
+  "lessons": [
+    {
+      "position": 0,
+      "title": "SELECT et FROM : lire une table",
+      "description": "Deux mots suffisent pour lire : SELECT (quoi) et FROM (où).",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez à quoi servent SELECT et FROM, dans cet ordre."
+        },
+        {
+          "block_type": "heading",
+          "content": "L'ordre de la phrase"
+        },
+        {
+          "block_type": "text",
+          "content": "En français on dirait : « Dans le tiroir clients, montre-moi les prénoms. » En SQL, on inverse un peu : on commence par ce qu'on veut voir, puis d'où ça vient.\n\nSELECT = les colonnes demandées. FROM = la table. Toujours dans cet ordre."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT prenom, ville\nFROM clients;"
+        },
+        {
+          "block_type": "text",
+          "content": "Résultat : deux colonnes seulement, une ligne par client. Léa / Paris, Hugo / Lyon, et ainsi de suite. Les autres colonnes (id, nom, age) restent dans l'armoire : on ne les a pas demandées."
+        },
+        {
+          "block_type": "callout",
+          "content": "On ne « sort » pas les dossiers de l'armoire. On en demande une photocopie. La table originale ne bouge pas."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT colonnes FROM table; — c'est le squelette de presque toutes vos requêtes."
+        }
+      ]
+    },
+    {
+      "position": 1,
+      "title": "SELECT * : tout récupérer",
+      "description": "L'étoile demande toutes les colonnes, dans l'ordre de la table.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez quand utiliser * et pourquoi, plus tard, on préférera nommer les colonnes."
+        },
+        {
+          "block_type": "heading",
+          "content": "L'étoile, raccourci débutant"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT * FROM clients; copie tout le tableau. C'est parfait pour explorer : « je veux voir à quoi ressemble cette table ». Sur 8 lignes, c'est instantané. Sur 8 millions de lignes, c'est lourd. Pour apprendre, * est votre ami."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT * FROM clients;"
+        },
+        {
+          "block_type": "text",
+          "content": "Les colonnes arrivent dans l'ordre de la table : id, prenom, nom, age, ville. Vous n'avez rien réordonné."
+        },
+        {
+          "block_type": "callout",
+          "content": "Plus tard, en entreprise, on nomme les colonnes. Ici, * est autorisé et même recommandé pour vérifier qu'une table existe."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "* = toutes les colonnes. FROM clients = dans la table clients. Huit lignes s'affichent, une par client."
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "title": "Choisir des colonnes",
+      "description": "Ne demander que ce dont on a besoin : prenom, ville, prix…",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous listez une ou plusieurs colonnes, séparées par des virgules, dans l'ordre que vous voulez."
+        },
+        {
+          "block_type": "heading",
+          "content": "Nommer au lieu d'étoile"
+        },
+        {
+          "block_type": "text",
+          "content": "Si vous préparez un listing d'adresses, l'âge ne sert à rien. Demandez seulement prenom et ville. L'ordre après SELECT est l'ordre d'affichage : ville, prenom inverse les deux colonnes."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT prenom, ville\nFROM clients;"
+        },
+        {
+          "block_type": "text",
+          "content": "Une seule colonne ? Pas de virgule : SELECT prenom FROM clients; Les noms de colonnes s'écrivent sans guillemets. Les textes dans les données, eux, auront des quotes simples — on y vient au module Filtrer."
+        },
+        {
+          "block_type": "callout",
+          "content": "Faute fréquente : SELECT prenom ville (sans virgule). SQL comprend mal. Mettez une virgule entre chaque colonne."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT col1, col2 FROM table; — virgule entre les colonnes, pas de virgule avant FROM."
+        }
+      ]
+    },
+    {
+      "position": 3,
+      "title": "Exercice : lister les prénoms",
+      "description": "Une seule colonne : prenom.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "On ne veut plus tout le dossier. Seulement les prénoms, dans l'ordre de la table."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez uniquement la colonne prenom de la table clients, toutes les lignes.",
+            "starterQuery": "SELECT ",
+            "expectedColumns": [
+              "prenom"
+            ],
+            "expectedResult": [
+              [
+                "Léa"
+              ],
+              [
+                "Hugo"
+              ],
+              [
+                "Chloé"
+              ],
+              [
+                "Nathan"
+              ],
+              [
+                "Emma"
+              ],
+              [
+                "Lucas"
+              ],
+              [
+                "Manon"
+              ],
+              [
+                "Louis"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Ne mettez pas d'étoile : nommez la colonne prenom.",
+              "SELECT prenom FROM clients;"
+            ],
+            "solution": "SELECT prenom FROM clients;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "title": "Exercice : prénom et ville",
+      "description": "Deux colonnes, dans cet ordre : prenom, ville.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 4,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Même table, deux colonnes. L'ordre demandé est prenom puis ville — comme dans l'exemple du cours."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez le prénom et la ville de chaque client, dans cet ordre : prenom, ville.",
+            "starterQuery": "SELECT ",
+            "expectedColumns": [
+              "prenom",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "Léa",
+                "Paris"
+              ],
+              [
+                "Hugo",
+                "Lyon"
+              ],
+              [
+                "Chloé",
+                "Paris"
+              ],
+              [
+                "Nathan",
+                "Marseille"
+              ],
+              [
+                "Emma",
+                "Paris"
+              ],
+              [
+                "Lucas",
+                "Lille"
+              ],
+              [
+                "Manon",
+                "Lyon"
+              ],
+              [
+                "Louis",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Séparez les deux colonnes par une virgule.",
+              "Exemple du cours : SELECT prenom, ville FROM clients;"
+            ],
+            "solution": "SELECT prenom, ville FROM clients;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    }
+  ]
+}

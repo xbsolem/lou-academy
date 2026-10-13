@@ -1,0 +1,397 @@
+{
+  "title": "Évaluation finale — SQL pour débutants",
+  "passing_score": 70,
+  "max_attempts": null,
+  "questions": [
+    {
+      "difficulty": "easy",
+      "question": "Si une base de données est une armoire, que représente une table ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. La pièce entière du bureau",
+        "B. Un tiroir qui range un type de fiches",
+        "C. Une seule valeur, comme un âge",
+        "D. Le logiciel Excel lui-même"
+      ],
+      "correct_answer": [1],
+      "explanation": "Chaque table est un tiroir (clients, produits…). La base est l'armoire. Une valeur est une cellule, pas la table."
+    },
+    {
+      "difficulty": "easy",
+      "question": "Dans la table CLIENTS, une ligne correspond à…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Le titre « ville »",
+        "B. Toutes les colonnes de toutes les tables",
+        "C. Un client complet (une fiche)",
+        "D. Uniquement le prénom"
+      ],
+      "correct_answer": [2],
+      "explanation": "Une ligne = une fiche = un client. Une colonne = un type d'info (âge, ville…)."
+    },
+    {
+      "difficulty": "easy",
+      "question": "À quoi sert une colonne dans une table ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. À identifier le fichier Excel d'origine",
+        "B. À stocker le même genre d'information pour chaque ligne",
+        "C. À trier automatiquement dès qu'on insère une fiche",
+        "D. À cacher les lignes trop longues"
+      ],
+      "correct_answer": [1],
+      "explanation": "La colonne age contient l'âge de chaque client. C'est le même champ, répété sur chaque fiche."
+    },
+    {
+      "difficulty": "easy",
+      "question": "SQL, dans ce cours, c'est surtout…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Un langage pour poser des questions à la base",
+        "B. Un logiciel à installer à la place du navigateur",
+        "C. Un type de graphique",
+        "D. Le nom de la table des clients"
+      ],
+      "correct_answer": [0],
+      "explanation": "SQL n'est pas un logiciel. C'est le langage des requêtes : SELECT, FROM, WHERE…"
+    },
+    {
+      "difficulty": "easy",
+      "question": "Quel mot-clé demande des colonnes à afficher ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. FROM",
+        "B. WHERE",
+        "C. LIMIT",
+        "D. SELECT"
+      ],
+      "correct_answer": [3],
+      "explanation": "SELECT choisit les colonnes. FROM choisit la table. WHERE filtre les lignes."
+    },
+    {
+      "difficulty": "easy",
+      "question": "Dans SELECT prenom FROM clients; le mot clients désigne…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Une colonne",
+        "B. La table à lire",
+        "C. Un filtre WHERE",
+        "D. Une fonction comme COUNT"
+      ],
+      "correct_answer": [1],
+      "explanation": "FROM indique la table. prenom est la colonne. clients est donc la table."
+    },
+    {
+      "difficulty": "easy",
+      "question": "Que signifie l'étoile dans SELECT * FROM clients; ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. Uniquement la première colonne",
+        "B. Uniquement les 5 premières lignes",
+        "C. Toutes les colonnes de la table",
+        "D. Toutes les tables de la base"
+      ],
+      "correct_answer": [2],
+      "explanation": "* = toutes les colonnes de la table citée après FROM, pas toutes les tables de l'armoire."
+    },
+    {
+      "difficulty": "easy",
+      "question": "À quoi sert WHERE ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. À choisir la table",
+        "B. À garder seulement les lignes qui respectent une condition",
+        "C. À changer l'ordre des colonnes",
+        "D. À compter les lignes"
+      ],
+      "correct_answer": [1],
+      "explanation": "WHERE filtre les lignes. SELECT filtre (choisit) les colonnes. Ce n'est pas le même axe."
+    },
+    {
+      "difficulty": "easy",
+      "question": "ORDER BY age DESC range les clients…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Du plus jeune au plus âgé",
+        "B. Par ordre alphabétique du prénom",
+        "C. Du plus âgé au plus jeune",
+        "D. Par ville, de A à Z"
+      ],
+      "correct_answer": [2],
+      "explanation": "DESC = décroissant. Sur l'âge, les plus grands nombres (plus âgés) arrivent en premier."
+    },
+    {
+      "difficulty": "easy",
+      "question": "LIMIT 5 à la fin d'une requête…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Affiche au plus 5 lignes du résultat",
+        "B. Garde les lignes dont l'id vaut 5",
+        "C. Multiplie les prix par 5",
+        "D. Crée 5 tables"
+      ],
+      "correct_answer": [0],
+      "explanation": "LIMIT coupe le résultat. Ce n'est pas un WHERE sur l'id."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Quelle requête renvoie uniquement les prénoms, une ligne par client ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM prenom;",
+        "B. FROM clients SELECT prenom;",
+        "C. SELECT prenom WHERE clients;",
+        "D. SELECT prenom FROM clients;"
+      ],
+      "correct_answer": [3],
+      "explanation": "L'ordre est SELECT … FROM …. prenom est une colonne, clients est la table."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Pour ne garder que les habitants de Paris, laquelle est correcte ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM clients WHERE ville = Paris;",
+        "B. SELECT * FROM clients WHERE ville = 'Paris';",
+        "C. SELECT * FROM clients WHERE 'Paris';",
+        "D. SELECT Paris FROM clients;"
+      ],
+      "correct_answer": [1],
+      "explanation": "Le texte Paris doit être entre quotes simples. Sans quotes, SQL croit que Paris est un nom de colonne."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "La condition age >= 18 signifie…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Âge strictement supérieur à 18 (18 exclu)",
+        "B. Âge égal à 18 uniquement",
+        "C. Âge d'au moins 18 ans (18 inclus)",
+        "D. Les 18 premières lignes"
+      ],
+      "correct_answer": [2],
+      "explanation": ">= = plus grand ou égal. Une personne de 18 ans est majeure selon ce filtre."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Avec AND, une ligne est gardée si…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Au moins une des deux conditions est vraie",
+        "B. Les deux conditions sont vraies en même temps",
+        "C. Aucune condition n'est vraie",
+        "D. La table contient AND dans son nom"
+      ],
+      "correct_answer": [1],
+      "explanation": "AND resserre : il faut Paris ET plus de 25 ans, pas l'un ou l'autre."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Avec OR, une ligne est gardée si…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Au moins une des conditions est vraie",
+        "B. Obligatoirement les deux conditions",
+        "C. Uniquement la condition de gauche",
+        "D. Uniquement la condition de droite"
+      ],
+      "correct_answer": [0],
+      "explanation": "OR élargit. Paris OU age > 25 garde les Parisiens et les plus de 25 ans."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Pourquoi écrit-on 'Paris' avec des quotes, mais 25 sans quotes ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. Paris est un nombre secret",
+        "B. Les textes s'entourent de quotes simples, les nombres non",
+        "C. C'est obligatoire seulement avec ORDER BY",
+        "D. Les quotes servent à mettre en gras"
+      ],
+      "correct_answer": [1],
+      "explanation": "ville = 'Paris' (texte). age > 25 (nombre). Inverser ces règles provoque des erreurs ou des surprises."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Quelle clause trie du plus petit âge au plus grand ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. ORDER BY age ASC",
+        "B. ORDER BY age DESC",
+        "C. LIMIT age ASC",
+        "D. WHERE age ASC"
+      ],
+      "correct_answer": [0],
+      "explanation": "ASC = croissant. DESC = décroissant. LIMIT et WHERE ne trient pas."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Vous voulez les 5 clients les plus âgés. Quelle fin de requête convient ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. ORDER BY age ASC LIMIT 5",
+        "B. WHERE age = 5",
+        "C. ORDER BY age DESC LIMIT 5",
+        "D. LIMIT 5 ORDER BY age DESC"
+      ],
+      "correct_answer": [2],
+      "explanation": "On trie d'abord les plus âgés (DESC), puis on coupe à 5. LIMIT s'écrit après ORDER BY."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "COUNT(*) dans SELECT COUNT(*) FROM clients; renvoie…",
+      "question_type": "single_choice",
+      "options": [
+        "A. La liste des prénoms",
+        "B. Le nombre de lignes de la table clients",
+        "C. La somme des âges",
+        "D. Le prix moyen"
+      ],
+      "correct_answer": [1],
+      "explanation": "COUNT(*) compte les fiches. Ici : 8. Ce n'est ni SUM ni AVG."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "SUM(prix) calcule…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Le nombre de produits",
+        "B. La moyenne des prix",
+        "C. L'addition de toutes les valeurs de la colonne prix",
+        "D. Le produit le plus cher"
+      ],
+      "correct_answer": [2],
+      "explanation": "SUM additionne. AVG moyenne. COUNT compte. Le plus cher se trouve avec ORDER BY + LIMIT."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "AVG(prix) sur 8 produits dont la somme des prix vaut 419 donne…",
+      "question_type": "single_choice",
+      "options": [
+        "A. 419",
+        "B. 8",
+        "C. 52,375",
+        "D. 50, parce qu'on arrondit toujours"
+      ],
+      "correct_answer": [2],
+      "explanation": "Moyenne = 419 / 8 = 52,375. SUM donnerait 419, COUNT donnerait 8."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Quelle requête est syntaxiquement dans le bon ordre ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. FROM clients SELECT prenom WHERE age > 25;",
+        "B. SELECT prenom FROM clients WHERE age > 25;",
+        "C. WHERE age > 25 SELECT prenom FROM clients;",
+        "D. SELECT prenom WHERE age > 25 FROM clients;"
+      ],
+      "correct_answer": [1],
+      "explanation": "Ordre : SELECT, FROM, WHERE, puis éventuellement ORDER BY et LIMIT."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "Que se passe-t-il souvent avec WHERE ville = Paris; (sans quotes) ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SQL comprend automatiquement que c'est du texte",
+        "B. Toutes les villes s'affichent",
+        "C. Une erreur : Paris est lu comme un nom de colonne inexistant",
+        "D. La table est supprimée"
+      ],
+      "correct_answer": [2],
+      "explanation": "Sans quotes, Paris n'est pas une chaîne. La base cherche une colonne Paris."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "SELECT prenom, ville FROM clients WHERE age > 25; affiche…",
+      "question_type": "single_choice",
+      "options": [
+        "A. Toutes les colonnes des plus de 25 ans",
+        "B. Prénom et ville des clients de plus de 25 ans",
+        "C. Tous les clients, mais seulement s'ils ont 25 ans pile",
+        "D. Uniquement Louis, quoi qu'il arrive"
+      ],
+      "correct_answer": [1],
+      "explanation": "Deux colonnes (prenom, ville) et un filtre d'âge. Hugo, Nathan, Lucas et Louis matchent sur nos données, pas seulement Louis (Louis est le cas Paris ET > 25)."
+    },
+    {
+      "difficulty": "intermediate",
+      "question": "AND et OR, quelle analogie est juste ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. AND élargit le résultat, OR le resserre",
+        "B. AND resserre (il faut les deux), OR élargit (il suffit d'une)",
+        "C. AND trie, OR limite",
+        "D. Ils sont strictement interchangeables"
+      ],
+      "correct_answer": [1],
+      "explanation": "Paris AND age > 25 : 1 ligne (Louis). Paris OR age > 25 : beaucoup plus de lignes."
+    },
+    {
+      "difficulty": "application",
+      "question": "On vous demande les clients de Paris qui ont plus de 25 ans. Quelle requête convient ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM clients WHERE ville = 'Paris' OR age > 25;",
+        "B. SELECT * FROM clients WHERE ville = 'Paris' AND age > 25;",
+        "C. SELECT * FROM clients WHERE age > 25;",
+        "D. SELECT * FROM clients WHERE ville = 'Paris';"
+      ],
+      "correct_answer": [1],
+      "explanation": "Il faut les deux conditions : ville et âge. OR ou un seul WHERE laisserait entrer Hugo (Lyon, 28) ou Emma (Paris, 24)."
+    },
+    {
+      "difficulty": "application",
+      "question": "Les 3 produits les plus chers se demandent ainsi :",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM produits WHERE prix = 3;",
+        "B. SELECT * FROM produits LIMIT 3 ORDER BY prix;",
+        "C. SELECT * FROM produits ORDER BY prix DESC LIMIT 3;",
+        "D. SELECT COUNT(*) FROM produits WHERE prix > 50;"
+      ],
+      "correct_answer": [2],
+      "explanation": "Trier les prix vers le bas (DESC) puis garder 3 lignes. LIMIT avant ORDER BY est dans le mauvais ordre."
+    },
+    {
+      "difficulty": "application",
+      "question": "La direction veut le nombre de clients, pas leurs noms. Que lancez-vous ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM clients;",
+        "B. SELECT prenom FROM clients;",
+        "C. SELECT SUM(age) FROM clients;",
+        "D. SELECT COUNT(*) FROM clients;"
+      ],
+      "correct_answer": [3],
+      "explanation": "COUNT(*) répond « combien ». SELECT * ou prenom listerait les gens. SUM(age) additionnerait les âges."
+    },
+    {
+      "difficulty": "application",
+      "question": "Le résultat n'a qu'une ligne, une colonne, la valeur 419. Quelle requête l'a le plus probablement produite ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. SELECT * FROM produits;",
+        "B. SELECT SUM(prix) FROM produits;",
+        "C. SELECT AVG(prix) FROM produits;",
+        "D. SELECT COUNT(*) FROM produits;"
+      ],
+      "correct_answer": [1],
+      "explanation": "419 est la somme des 8 prix. AVG donnerait 52,375. COUNT donnerait 8. SELECT * listerait 8 lignes."
+    },
+    {
+      "difficulty": "application",
+      "question": "Vous devez lister les produits à plus de 50 €. Quel WHERE est le bon ?",
+      "question_type": "single_choice",
+      "options": [
+        "A. WHERE prix > 50",
+        "B. WHERE prix = 50",
+        "C. WHERE prix < 50",
+        "D. WHERE stock > 50"
+      ],
+      "correct_answer": [0],
+      "explanation": "prix > 50 garde Casque, Clavier, Sac et Veste. = 50 ne garde personne ici. stock > 50 parlerait des quantités, pas du tarif."
+    }
+  ]
+}

@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Lesson, ContentBlock } from "@/types/database";
+import type { Lesson, ContentBlock, LessonType } from "@/types/database";
 import QuizEditor from "./QuizEditor";
+import SqlExerciseBlockEditor from "./SqlExerciseBlockEditor";
+import { DEFAULT_SQL_EXERCISE, serializeSqlExerciseData } from "@/lib/sql-exercise-data";
 
 const BLOCK_TYPES = [
   { type: "heading", label: "Titre", icon: "fa-heading" },
@@ -12,6 +14,7 @@ const BLOCK_TYPES = [
   { type: "code", label: "Code", icon: "fa-code" },
   { type: "image", label: "Image", icon: "fa-image" },
   { type: "video", label: "Video", icon: "fa-video" },
+  { type: "sql_exercise", label: "Exercice SQL", icon: "fa-database" },
 ];
 
 export default function LessonEditor({
@@ -50,12 +53,22 @@ export default function LessonEditor({
     onRefresh();
   };
 
+  const setLessonType = async (lesson_type: LessonType) => {
+    await supabase.from("lessons").update({ lesson_type }).eq("id", lessonId);
+    setLesson((prev) => (prev ? { ...prev, lesson_type } : prev));
+    if (lesson_type === "sql_exercise") {
+      const hasSql = blocks.some((b) => b.block_type === "sql_exercise");
+      if (!hasSql) await addBlock("sql_exercise");
+    }
+    onRefresh();
+  };
+
   const addBlock = async (blockType: string) => {
     const maxPos = blocks.length > 0 ? Math.max(...blocks.map((b) => b.position)) : -1;
     await supabase.from("content_blocks").insert({
       lesson_id: lessonId,
       block_type: blockType,
-      content: "",
+      content: blockType === "sql_exercise" ? serializeSqlExerciseData(DEFAULT_SQL_EXERCISE) : "",
       position: maxPos + 1,
     });
     await loadData();
@@ -65,11 +78,15 @@ export default function LessonEditor({
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
   };
 
-  const saveBlock = async (id: string) => {
+  const saveBlock = async (id: string, contentOverride?: string) => {
     const block = blocks.find((b) => b.id === id);
-    if (!block) return;
+    const content = contentOverride ?? block?.content;
+    if (content == null) return;
+    if (contentOverride !== undefined) {
+      setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content: contentOverride } : b)));
+    }
     setSaving(true);
-    await supabase.from("content_blocks").update({ content: block.content }).eq("id", id);
+    await supabase.from("content_blocks").update({ content }).eq("id", id);
     setSaving(false);
   };
 
@@ -144,6 +161,15 @@ export default function LessonEditor({
           }}
           onFocus={(e) => { (e.target as HTMLElement).style.borderBottomColor = "var(--primary)"; }}
         />
+        <select
+          value={lesson.lesson_type}
+          onChange={(e) => setLessonType(e.target.value as LessonType)}
+          style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: 8, fontSize: "0.8rem", fontFamily: "inherit" }}
+        >
+          <option value="lesson">Leçon</option>
+          <option value="quiz">Quiz</option>
+          <option value="sql_exercise">Exercice SQL</option>
+        </select>
         {saving && <span style={{ fontSize: "0.8rem", color: "var(--text-lighter)" }}>Sauvegarde...</span>}
       </div>
 
@@ -221,7 +247,13 @@ export default function LessonEditor({
             </div>
           </div>
           <div style={{ padding: 12 }}>
-            {block.block_type === "heading" ? (
+            {block.block_type === "sql_exercise" ? (
+              <SqlExerciseBlockEditor
+                content={block.content}
+                onChange={(content) => updateBlock(block.id, content)}
+                onSave={(content) => saveBlock(block.id, content)}
+              />
+            ) : block.block_type === "heading" ? (
               <input
                 type="text"
                 value={block.content}

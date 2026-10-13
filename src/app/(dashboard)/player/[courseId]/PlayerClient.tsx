@@ -1,14 +1,21 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Course, Module, Lesson, ContentBlock } from "@/types/database";
 import QuizPlayer from "@/components/ui/QuizPlayer";
 import SqlExercise from "@/components/ui/SqlExercise";
+import SqlPracticalTest from "@/components/ui/SqlPracticalTest";
 import AiTutor from "@/components/ui/AiTutor";
+import { parseSqlExerciseData } from "@/lib/sql-exercise-data";
+import { canIssueCertificate, computeProgressPercent, isPracticalLesson } from "@/lib/completion";
 
 type LessonFull = Lesson & { content_blocks: ContentBlock[] };
 type ModuleFull = Module & { lessons: LessonFull[] };
+
+function sqlBlocksOf(lesson: LessonFull) {
+  return (lesson.content_blocks || []).filter((block) => block.block_type === "sql_exercise");
+}
 
 export default function PlayerClient({
   course,
@@ -27,64 +34,81 @@ export default function PlayerClient({
   );
   const [completing, setCompleting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sqlSuccess, setSqlSuccess] = useState<Record<string, boolean>>({});
   const supabase = createClient();
 
-  const allLessons = modules.flatMap((m) => m.lessons);
+  const allLessons = useMemo(() => modules.flatMap((m) => m.lessons), [modules]);
 
-  const markComplete = useCallback(async () => {
-    if (!activeLesson || isPreview) return;
+  const markComplete = useCallback(async (options?: { advance?: boolean; lesson?: LessonFull }) => {
+    const lesson = options?.lesson || activeLesson;
+    if (!lesson || isPreview) return;
     setCompleting(true);
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setCompleting(false);
+      return;
+    }
 
     await supabase.from("lesson_progress").upsert({
       user_id: user.id,
-      lesson_id: activeLesson.id,
+      lesson_id: lesson.id,
       status: "completed",
       progress_percent: 100,
       completed_at: new Date().toISOString(),
     }, { onConflict: "user_id,lesson_id" });
 
-    setProgress((prev) => ({ ...prev, [activeLesson.id]: "completed" }));
+    const nextProgress = { ...progress, [lesson.id]: "completed" };
+    setProgress(nextProgress);
 
-    const totalLessons = allLessons.length;
-    const completedCount = Object.values({ ...progress, [activeLesson.id]: "completed" })
-      .filter((s) => s === "completed").length;
-    const pct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+    const pct = computeProgressPercent(allLessons, nextProgress);
+    const issueCert = canIssueCertificate(allLessons, nextProgress);
 
     await supabase.from("enrollments").upsert({
       user_id: user.id,
       course_id: course.id,
-      status: pct >= 100 ? "completed" : "in_progress",
+      status: issueCert ? "completed" : "in_progress",
       progress_percent: pct,
       started_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
-      ...(pct >= 100 ? { completed_at: new Date().toISOString() } : {}),
+      ...(issueCert ? { completed_at: new Date().toISOString() } : {}),
     }, { onConflict: "user_id,course_id" });
 
-    if (pct >= 100) {
-      const certNumber = `LOU-${course.id.substring(0, 8).toUpperCase()}-${user.id.substring(0, 6).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
-      await supabase.from("certificates").upsert({
-        user_id: user.id,
-        course_id: course.id,
-        certificate_number: certNumber,
-      }, { onConflict: "user_id,course_id" });
-
-      await supabase.from("activity_events").insert({
-        user_id: user.id,
-        course_id: course.id,
-        event_type: "Certificat obtenu",
-      });
+    if (issueCert) {
+      const { data: existingCert } = await supabase
+        .from("certificates")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("course_id", course.id)
+        .maybeSingle();
+      if (!existingCert) {
+        const certNumber = `LOU-${course.id.substring(0, 8).toUpperCase()}-${user.id.substring(0, 6).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+        await supabase.from("certificates").insert({
+          user_id: user.id,
+          course_id: course.id,
+          certificate_number: certNumber,
+          metadata: {
+            duration_minutes: course.estimated_duration_minutes,
+            course_title: course.title,
+          },
+        });
+        await supabase.from("activity_events").insert({
+          user_id: user.id,
+          course_id: course.id,
+          event_type: "Certificat obtenu",
+        });
+      }
     }
 
-    const currentIdx = allLessons.findIndex((l) => l.id === activeLesson.id);
-    if (currentIdx < allLessons.length - 1) {
-      setActiveLesson(allLessons[currentIdx + 1]);
+    if (options?.advance !== false) {
+      const currentIdx = allLessons.findIndex((l) => l.id === lesson.id);
+      if (currentIdx < allLessons.length - 1) {
+        setActiveLesson(allLessons[currentIdx + 1]);
+      }
     }
 
     setCompleting(false);
-  }, [activeLesson, isPreview, supabase, allLessons, progress, course.id]);
+  }, [activeLesson, isPreview, supabase, allLessons, progress, course.id, course.estimated_duration_minutes, course.title]);
 
   const goToLesson = (lesson: LessonFull) => {
     setActiveLesson(lesson);
@@ -92,10 +116,33 @@ export default function PlayerClient({
   };
 
   const currentIdx = activeLesson ? allLessons.findIndex((l) => l.id === activeLesson.id) : -1;
+  const sqlBlocks = activeLesson ? sqlBlocksOf(activeLesson) : [];
+  const practical = activeLesson ? isPracticalLesson(activeLesson) : false;
+  const parsedExercises = sqlBlocks
+    .map((block) => ({ block, data: parseSqlExerciseData(block.content) }))
+    .filter((item): item is { block: ContentBlock; data: NonNullable<ReturnType<typeof parseSqlExerciseData>> } => Boolean(item.data));
+  const displayBlocks = (activeLesson?.content_blocks || []).filter(
+    (block) => block.block_type !== "sql_exercise" && block.block_type !== "quiz"
+  );
+  const isQuiz = activeLesson?.lesson_type === "quiz";
+  const isSqlLesson = Boolean(activeLesson && (activeLesson.lesson_type === "sql_exercise" || sqlBlocks.length > 0));
+  const lessonComplete = activeLesson ? progress[activeLesson.id] === "completed" : false;
+  const showFinish =
+    !isPreview &&
+    activeLesson &&
+    !lessonComplete &&
+    !isQuiz &&
+    !practical &&
+    !(activeLesson.lesson_type === "sql_exercise");
+  const showGatedSqlFinish =
+    !isPreview &&
+    activeLesson &&
+    !lessonComplete &&
+    activeLesson.lesson_type === "sql_exercise" &&
+    !practical;
 
   return (
     <div className="player-layout">
-      {/* Mobile toggle */}
       <button
         className="player-sidebar-toggle"
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -104,12 +151,11 @@ export default function PlayerClient({
         {sidebarOpen ? "Masquer le sommaire" : "Afficher le sommaire"}
       </button>
 
-      {/* Sidebar */}
       <div className={`player-sidebar${!sidebarOpen ? " collapsed" : ""}`}>
         <h3 style={{ fontSize: "0.95rem", fontWeight: 600, marginBottom: 16, padding: "0 8px" }}>{course.title}</h3>
         {isPreview && (
           <div style={{ padding: "6px 12px", background: "#fffbeb", color: "#d97706", borderRadius: 8, fontSize: "0.75rem", fontWeight: 600, marginBottom: 12, textAlign: "center" }}>
-            MODE APERCU
+            MODE APERÇU
           </div>
         )}
         {modules.map((mod) => (
@@ -147,51 +193,14 @@ export default function PlayerClient({
         ))}
       </div>
 
-      {/* Main Content */}
       <div className="player-content">
         {activeLesson ? (
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 24 }}>{activeLesson.title}</h2>
-            {/* Quiz Lesson */}
-            {activeLesson.lesson_type === "quiz" && (
-              <div style={{ marginBottom: 24 }}>
-                <QuizPlayer
-                  lessonId={activeLesson.id}
-                  isPreview={isPreview}
-                  onComplete={async (passed) => {
-                    if (passed && !isPreview) {
-                      await markComplete();
-                    }
-                  }}
-                />
-              </div>
-            )}
 
-            {/* SQL Exercise */}
-            {activeLesson.lesson_type === "sql_exercise" && activeLesson.content_blocks?.some((b) => b.block_type === "sql_exercise") && (
-              <div style={{ marginBottom: 24 }}>
-                {activeLesson.content_blocks
-                  .filter((b) => b.block_type === "sql_exercise")
-                  .map((block) => {
-                    let exerciseData;
-                    try { exerciseData = JSON.parse(block.content); } catch { exerciseData = null; }
-                    if (!exerciseData) return null;
-                    return (
-                      <SqlExercise
-                        key={block.id}
-                        lessonId={activeLesson.id}
-                        exerciseData={exerciseData}
-                        isPreview={isPreview}
-                      />
-                    );
-                  })}
-              </div>
-            )}
-
-            {/* Content */}
-            <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
-              {activeLesson.content_blocks && activeLesson.content_blocks.length > 0 ? (
-                activeLesson.content_blocks.map((block) => (
+            {displayBlocks.length > 0 && (
+              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
+                {displayBlocks.map((block) => (
                   <div key={block.id} style={{ marginBottom: 20 }}>
                     {block.block_type === "heading" && (
                       <h3 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 8 }}>{block.content}</h3>
@@ -213,17 +222,68 @@ export default function PlayerClient({
                     {block.block_type === "image" && block.content && (
                       <img src={block.content} alt="" style={{ maxWidth: "100%", borderRadius: 8 }} />
                     )}
+                    {block.block_type === "video" && block.content && (
+                      <video src={block.content} controls style={{ maxWidth: "100%", borderRadius: 8 }} />
+                    )}
                   </div>
-                ))
-              ) : (
+                ))}
+              </div>
+            )}
+
+            {isQuiz && (
+              <div style={{ marginBottom: 24 }}>
+                <QuizPlayer
+                  lessonId={activeLesson.id}
+                  isPreview={isPreview}
+                  onComplete={async (passed) => {
+                    if (passed && !isPreview) {
+                      await markComplete({ advance: false, lesson: activeLesson });
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {!isQuiz && practical && parsedExercises.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <SqlPracticalTest
+                  lessonId={activeLesson.id}
+                  exercises={parsedExercises.map((item) => item.data)}
+                  isPreview={isPreview}
+                  onComplete={async (passed) => {
+                    if (passed && !isPreview) {
+                      await markComplete({ advance: false, lesson: activeLesson });
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {!isQuiz && !practical && parsedExercises.map((item) => (
+              <div key={item.block.id} style={{ marginBottom: 24 }}>
+                <SqlExercise
+                  lessonId={activeLesson.id}
+                  exerciseData={item.data}
+                  isPreview={isPreview}
+                  onSuccess={() => {
+                    setSqlSuccess((prev) => ({ ...prev, [activeLesson.id]: true }));
+                    if (!isPreview) {
+                      void markComplete({ advance: false, lesson: activeLesson });
+                    }
+                  }}
+                />
+              </div>
+            ))}
+
+            {!isQuiz && !isSqlLesson && displayBlocks.length === 0 && (
+              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
                 <div style={{ textAlign: "center", padding: 40, color: "var(--text-light)" }}>
                   <i className="fas fa-file-alt" style={{ fontSize: "3rem", color: "var(--border)", marginBottom: 12, display: "block" }} />
-                  <p>Aucun contenu pour cette lecon.</p>
+                  <p>Aucun contenu pour cette leçon.</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* Navigation */}
             <div className="player-nav">
               <button
                 onClick={() => currentIdx > 0 && setActiveLesson(allLessons[currentIdx - 1])}
@@ -235,12 +295,12 @@ export default function PlayerClient({
                   display: "inline-flex", alignItems: "center", gap: 8,
                 }}
               >
-                <i className="fas fa-chevron-left" /> Precedent
+                <i className="fas fa-chevron-left" /> Précédent
               </button>
 
-              {!isPreview && progress[activeLesson.id] !== "completed" && (
+              {showFinish && (
                 <button
-                  onClick={markComplete}
+                  onClick={() => markComplete({ advance: true })}
                   disabled={completing}
                   style={{
                     padding: "10px 24px", borderRadius: "var(--radius-sm)", background: "var(--success)",
@@ -249,7 +309,25 @@ export default function PlayerClient({
                     display: "inline-flex", alignItems: "center", gap: 8,
                   }}
                 >
-                  <i className="fas fa-check" /> Marquer comme termine
+                  <i className="fas fa-check" /> Terminer la leçon
+                </button>
+              )}
+
+              {showGatedSqlFinish && (
+                <button
+                  onClick={() => markComplete({ advance: true })}
+                  disabled={completing || !sqlSuccess[activeLesson.id]}
+                  title={sqlSuccess[activeLesson.id] ? "Terminer la leçon" : "Validez l'exercice pour terminer"}
+                  style={{
+                    padding: "10px 24px", borderRadius: "var(--radius-sm)", background: "var(--success)",
+                    color: "#fff", border: "none",
+                    cursor: completing || !sqlSuccess[activeLesson.id] ? "not-allowed" : "pointer",
+                    fontSize: "0.9rem", fontWeight: 500, fontFamily: "inherit",
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    opacity: sqlSuccess[activeLesson.id] ? 1 : 0.5,
+                  }}
+                >
+                  <i className="fas fa-check" /> Terminer la leçon
                 </button>
               )}
 
@@ -270,13 +348,12 @@ export default function PlayerClient({
         ) : (
           <div style={{ textAlign: "center", padding: 60, color: "var(--text-light)" }}>
             <i className="fas fa-book-open" style={{ fontSize: "4rem", color: "var(--border)", marginBottom: 16, display: "block" }} />
-            <h3 style={{ marginBottom: 8, color: "var(--text)" }}>Aucune lecon</h3>
+            <h3 style={{ marginBottom: 8, color: "var(--text)" }}>Aucune leçon</h3>
             <p>Cette formation n&apos;a pas encore de contenu.</p>
           </div>
         )}
       </div>
 
-      {/* AI Tutor */}
       {!isPreview && (
         <AiTutor
           courseTitle={course.title}

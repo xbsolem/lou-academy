@@ -1,0 +1,342 @@
+{
+  "position": 4,
+  "title": "Calculer",
+  "description": "COUNT, SUM et AVG : compter, additionner, moyenner.",
+  "lessons": [
+    {
+      "position": 0,
+      "title": "COUNT : compter les lignes",
+      "description": "COUNT(*) répond « combien ? » par un petit tableau d'une case.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez compter les lignes d'une table, éventuellement après un WHERE."
+        },
+        {
+          "block_type": "heading",
+          "content": "Une question, une case"
+        },
+        {
+          "block_type": "text",
+          "content": "Parfois on ne veut pas la liste, on veut le nombre. Combien de clients ? COUNT(*) compte les lignes. Le résultat n'est plus 8 fiches : c'est une ligne, une colonne, la valeur 8."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT COUNT(*)\nFROM clients;"
+        },
+        {
+          "block_type": "text",
+          "content": "On peut filtrer avant de compter : SELECT COUNT(*) FROM clients WHERE ville = 'Paris'; donne 4. L'étoile ici ne signifie pas « toutes les colonnes à afficher ». Dans COUNT(*), elle signifie « chaque ligne »."
+        },
+        {
+          "block_type": "callout",
+          "content": "COUNT(*) ne liste pas les gens. Si vous voyez encore Léa, Hugo, Chloé… vous avez oublié COUNT et fait un SELECT *."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT COUNT(*) FROM table; — une valeur, pas un listing. Exemple : SELECT COUNT(*) FROM clients;"
+        }
+      ]
+    },
+    {
+      "position": 1,
+      "title": "SUM : additionner",
+      "description": "SUM(colonne) additionne des nombres, jamais des prénoms.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous additionnez une colonne numérique, par exemple tous les prix du catalogue."
+        },
+        {
+          "block_type": "heading",
+          "content": "La calculette de l'armoire"
+        },
+        {
+          "block_type": "text",
+          "content": "SUM(prix) parcourt la colonne prix et additionne. Sur nos 8 produits : 80+20+12+89+55+34+30+99 = 419. Encore une seule case en résultat."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT SUM(prix)\nFROM produits;"
+        },
+        {
+          "block_type": "text",
+          "content": "On peut filtrer : SUM(prix) des produits à plus de 50 € additionne seulement Casque, Clavier, Sac et Veste. SUM(prenom) n'a pas de sens : on n'additionne pas des mots."
+        },
+        {
+          "block_type": "callout",
+          "content": "COUNT compte des lignes. SUM additionne des valeurs. Ce n'est pas la même question : « combien de produits » vs « quelle est la somme des prix »."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "SELECT SUM(prix) FROM produits; — une colonne numérique entre parenthèses."
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "title": "AVG : la moyenne",
+      "description": "AVG(colonne) = somme divisée par le nombre de lignes concernées.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous calculez une moyenne (prix moyen, âge moyen) sans la faire à la main."
+        },
+        {
+          "block_type": "heading",
+          "content": "La moyenne, pas le milieu de liste"
+        },
+        {
+          "block_type": "text",
+          "content": "AVG(prix) = SUM(prix) / COUNT(*). Ici 419 / 8 = 52,375. Ce n'est pas « le produit du milieu ». C'est l'équilibre de tous les prix."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT AVG(prix)\nFROM produits;"
+        },
+        {
+          "block_type": "text",
+          "content": "Même idée sur les clients : SELECT AVG(age) FROM clients; Vous n'en aurez pas besoin dans les exercices, mais la mécanique est identique."
+        },
+        {
+          "block_type": "callout",
+          "content": "AVG ignore-t-il les lignes filtrées ? Oui, si vous mettez un WHERE. AVG(prix) FROM produits WHERE prix > 50 ne moyenne que les produits chers."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "COUNT = combien. SUM = total. AVG = moyenne. Les trois s'écrivent SELECT FONCTION(colonne) FROM table;"
+        }
+      ]
+    },
+    {
+      "position": 3,
+      "title": "Exercice : compter les clients",
+      "description": "SELECT COUNT(*) FROM clients.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Une seule case en résultat : le nombre de fiches, pas la liste des prénoms."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Combien y a-t-il de clients ? Renvoyez uniquement le nombre, avec COUNT(*).",
+            "starterQuery": "SELECT ",
+            "expectedColumns": [
+              "COUNT(*)"
+            ],
+            "expectedResult": [
+              [
+                "8"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Pas de liste de noms : une fonction d'agrégat.",
+              "SELECT COUNT(*) FROM clients;"
+            ],
+            "solution": "SELECT COUNT(*) FROM clients;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "title": "Exercice : prix moyen",
+      "description": "SELECT AVG(prix) FROM produits.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "La moyenne des 8 prix du catalogue. Ce n'est pas le produit du milieu de liste."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Calculez le prix moyen des produits (colonne prix de la table produits).",
+            "starterQuery": "SELECT ",
+            "expectedColumns": [
+              "AVG(prix)"
+            ],
+            "expectedResult": [
+              [
+                "52.375"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "La fonction s'appelle AVG.",
+              "SELECT AVG(prix) FROM produits;"
+            ],
+            "solution": "SELECT AVG(prix) FROM produits;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "title": "Exercice : somme des prix",
+      "description": "SELECT SUM(prix) FROM produits.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Additionnez toute la colonne prix. Une valeur, pas huit lignes."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Calculez la somme de tous les prix du catalogue (table produits).",
+            "starterQuery": "SELECT ",
+            "expectedColumns": [
+              "SUM(prix)"
+            ],
+            "expectedResult": [
+              [
+                "419"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "La fonction s'appelle SUM.",
+              "SELECT SUM(prix) FROM produits;"
+            ],
+            "solution": "SELECT SUM(prix) FROM produits;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "title": "Exercice : produits à plus de 50 €",
+      "description": "WHERE prix > 50.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 5,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Retour au filtre : lister les produits chers, pas les additionner."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Affichez tous les produits dont le prix est strictement supérieur à 50. Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM produits WHERE ",
+            "expectedColumns": [
+              "id",
+              "nom",
+              "categorie",
+              "prix",
+              "stock"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Casque audio",
+                "Electronique",
+                "80",
+                "12"
+              ],
+              [
+                "4",
+                "Clavier mecanique",
+                "Electronique",
+                "89",
+                "8"
+              ],
+              [
+                "5",
+                "Sac a dos",
+                "Accessoires",
+                "55",
+                "15"
+              ],
+              [
+                "8",
+                "Veste laine",
+                "Vetements",
+                "99",
+                "6"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "C'est un WHERE, pas un AVG.",
+              "WHERE prix > 50"
+            ],
+            "solution": "SELECT * FROM produits WHERE prix > 50;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    }
+  ]
+}

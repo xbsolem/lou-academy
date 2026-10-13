@@ -1,0 +1,10 @@
+{
+  "slug": "sql-pour-debutants-2h",
+  "title": "SQL pour débutants – Apprendre SQL en 2 heures",
+  "description": "Apprenez à interroger une base de données, même si vous n'avez jamais écrit une ligne de SQL.\n\nEn 120 minutes, vous passez de zéro à vos premières requêtes vraiment utiles. Une base de données, c'est comme une armoire de dossiers : chaque tiroir est une table, chaque fiche est une ligne, chaque champ de la fiche est une colonne. Vous pouvez aussi la voir comme plusieurs tableaux Excel liés entre eux.\n\nVous apprenez à lire des données avec SELECT, à choisir une table avec FROM, à filtrer avec WHERE, à combiner des conditions avec AND et OR, à trier avec ORDER BY, à limiter avec LIMIT, puis à calculer avec COUNT, SUM et AVG.\n\nAucune connaissance préalable n'est demandée. Vous pratiquez sur une petite boutique : clients, produits et commandes. Chaque notion est courte, illustrée, puis testée dans un exercice interactif. À la fin, un quiz de 30 questions (score requis : 70 %) et un test pratique de 5 tâches valident vos acquis.\n\nPublic : débutants, équipes métier, personnes qui veulent enfin lire une base sans demander à un développeur. Durée : 2 heures. Niveau : débutant. Catégorie : Data.",
+  "level": "debutant",
+  "category": "Data",
+  "icon": "fa-database",
+  "gradient": "linear-gradient(135deg, #4f46e5, #7c3aed)",
+  "estimated_duration_minutes": 120
+}

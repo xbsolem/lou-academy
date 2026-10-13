@@ -1,0 +1,356 @@
+{
+  "position": 5,
+  "title": "Évaluation finale",
+  "description": "Quiz de 30 questions (70 % requis) puis un test pratique de 5 tâches (4 points chacune, 14/20 pour réussir).",
+  "lessons": [
+    {
+      "position": 0,
+      "title": "Quiz de validation",
+      "description": "30 questions, choix unique, score requis 70 %.",
+      "lesson_type": "quiz",
+      "estimated_duration_minutes": 15,
+      "is_required": true,
+      "hasQuiz": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Avant de valider"
+        },
+        {
+          "block_type": "text",
+          "content": "Ce quiz couvre tout le parcours : base, tables, colonnes, SELECT, FROM, WHERE, AND, OR, ORDER BY, LIMIT, COUNT, SUM, AVG. Une seule bonne réponse par question. Il faut 70 % pour réussir (21 bonnes réponses sur 30).\n\nEnsuite, un test pratique de 5 missions SQL reprend la boutique. Chaque mission vaut 4 points. Il faut 14 points sur 20 pour valider le test."
+        },
+        {
+          "block_type": "callout",
+          "content": "Lisez bien les quotes et les opérateurs. age > 18 n'est pas age >= 18. 'Paris' n'est pas Paris sans quotes."
+        }
+      ]
+    },
+    {
+      "position": 1,
+      "title": "Test pratique",
+      "description": "Cinq tâches SQL : 4 points chacune, 14/20 pour réussir.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 15,
+      "is_required": true,
+      "practicalExam": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Cinq missions (20 points)"
+        },
+        {
+          "block_type": "text",
+          "content": "Même boutique que tout le cours. Chaque tâche vaut 4 points. La validation compare le tableau résultat, pas le texte de la requête. Score requis : 14/20."
+        },
+        {
+          "block_type": "sql_exercise",
+          "metadata": {
+            "practicalExam": true
+          },
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Tâche 1 — Affichez tous les clients, toutes les colonnes, toutes les lignes.",
+            "starterQuery": "",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "2",
+                "Hugo",
+                "Bernard",
+                "28",
+                "Lyon"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ],
+              [
+                "7",
+                "Manon",
+                "Petit",
+                "17",
+                "Lyon"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "L'étoile demande toutes les colonnes.",
+              "SELECT * FROM clients;"
+            ],
+            "solution": "SELECT * FROM clients;",
+            "points": 4,
+            "practicalExam": true
+          }
+        },
+        {
+          "block_type": "sql_exercise",
+          "metadata": {
+            "practicalExam": true
+          },
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Tâche 2 — Affichez uniquement les clients qui habitent Paris. Toutes les colonnes.",
+            "starterQuery": "",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "WHERE s'écrit après FROM.",
+              "WHERE ville = 'Paris'"
+            ],
+            "solution": "SELECT * FROM clients WHERE ville = 'Paris';",
+            "points": 4,
+            "practicalExam": true
+          }
+        },
+        {
+          "block_type": "sql_exercise",
+          "metadata": {
+            "practicalExam": true
+          },
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Tâche 3 — Affichez tous les produits, du plus cher au moins cher. Toutes les colonnes.",
+            "starterQuery": "",
+            "expectedColumns": [
+              "id",
+              "nom",
+              "categorie",
+              "prix",
+              "stock"
+            ],
+            "expectedResult": [
+              [
+                "8",
+                "Veste laine",
+                "Vetements",
+                "99",
+                "6"
+              ],
+              [
+                "4",
+                "Clavier mecanique",
+                "Electronique",
+                "89",
+                "8"
+              ],
+              [
+                "1",
+                "Casque audio",
+                "Electronique",
+                "80",
+                "12"
+              ],
+              [
+                "5",
+                "Sac a dos",
+                "Accessoires",
+                "55",
+                "15"
+              ],
+              [
+                "6",
+                "Lampe de bureau",
+                "Maison",
+                "34",
+                "20"
+              ],
+              [
+                "7",
+                "Souris sans fil",
+                "Electronique",
+                "30",
+                "25"
+              ],
+              [
+                "2",
+                "T-shirt coton",
+                "Vetements",
+                "20",
+                "45"
+              ],
+              [
+                "3",
+                "Mug LOU",
+                "Accessoires",
+                "12",
+                "30"
+              ]
+            ],
+            "orderRequired": true,
+            "hints": [
+              "Décroissant sur la colonne prix.",
+              "ORDER BY prix DESC"
+            ],
+            "solution": "SELECT * FROM produits ORDER BY prix DESC;",
+            "points": 4,
+            "practicalExam": true
+          }
+        },
+        {
+          "block_type": "sql_exercise",
+          "metadata": {
+            "practicalExam": true
+          },
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Tâche 4 — Combien y a-t-il de clients dans la table ? Utilisez COUNT(*).",
+            "starterQuery": "",
+            "expectedColumns": [
+              "COUNT(*)"
+            ],
+            "expectedResult": [
+              [
+                "8"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Résultat attendu : une case avec 8.",
+              "SELECT COUNT(*) FROM clients;"
+            ],
+            "solution": "SELECT COUNT(*) FROM clients;",
+            "points": 4,
+            "practicalExam": true
+          }
+        },
+        {
+          "block_type": "sql_exercise",
+          "metadata": {
+            "practicalExam": true
+          },
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Tâche 5 — Affichez les produits dont le prix est strictement supérieur à 50. Toutes les colonnes.",
+            "starterQuery": "",
+            "expectedColumns": [
+              "id",
+              "nom",
+              "categorie",
+              "prix",
+              "stock"
+            ],
+            "expectedResult": [
+              [
+                "1",
+                "Casque audio",
+                "Electronique",
+                "80",
+                "12"
+              ],
+              [
+                "4",
+                "Clavier mecanique",
+                "Electronique",
+                "89",
+                "8"
+              ],
+              [
+                "5",
+                "Sac a dos",
+                "Accessoires",
+                "55",
+                "15"
+              ],
+              [
+                "8",
+                "Veste laine",
+                "Vetements",
+                "99",
+                "6"
+              ]
+            ],
+            "orderRequired": false,
+            "hints": [
+              "Opérateur strictement supérieur : >",
+              "SELECT * FROM produits WHERE prix > 50;"
+            ],
+            "solution": "SELECT * FROM produits WHERE prix > 50;",
+            "points": 4,
+            "practicalExam": true
+          }
+        }
+      ]
+    }
+  ]
+}

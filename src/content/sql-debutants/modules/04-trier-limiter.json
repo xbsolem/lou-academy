@@ -1,0 +1,493 @@
+{
+  "position": 3,
+  "title": "Trier et limiter",
+  "description": "ORDER BY ASC/DESC, LIMIT, et les deux ensemble pour un podium.",
+  "lessons": [
+    {
+      "position": 0,
+      "title": "ORDER BY : classer les résultats",
+      "description": "ASC du plus petit au plus grand, DESC du plus grand au plus petit.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez trier un résultat par une colonne, en croissant ou en décroissant."
+        },
+        {
+          "block_type": "heading",
+          "content": "Remettre les fiches en ordre"
+        },
+        {
+          "block_type": "text",
+          "content": "Sans ORDER BY, l'ordre des lignes n'est pas une promesse. Souvent c'est l'ordre d'insertion, mais on ne s'y fie pas. Si vous voulez « du plus jeune au plus âgé », dites-le."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT prenom, age\nFROM clients\nORDER BY age ASC;"
+        },
+        {
+          "block_type": "text",
+          "content": "ASC = ascending = croissant. Manon 17, puis Chloé 19, Léa 22… jusqu'à Louis 40. DESC inverse : Louis d'abord, Manon en dernier."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT prenom, age\nFROM clients\nORDER BY age DESC;"
+        },
+        {
+          "block_type": "callout",
+          "content": "Si vous oubliez ASC ou DESC, SQL utilise ASC par défaut. Écrivez-le quand même : votre intention est lisible."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "ORDER BY colonne ASC ou DESC se place après WHERE, s'il y en a un. Il change l'ordre, pas le contenu."
+        }
+      ]
+    },
+    {
+      "position": 1,
+      "title": "LIMIT : n'afficher que le début",
+      "description": "Couper le résultat après N lignes.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous savez demander « les 5 premières lignes du résultat », pas plus."
+        },
+        {
+          "block_type": "heading",
+          "content": "Un plafond, pas un filtre"
+        },
+        {
+          "block_type": "text",
+          "content": "WHERE enlève des lignes selon une condition. LIMIT coupe après un nombre. LIMIT 5 sur 8 clients en montre 5, sans se demander pourquoi les 3 autres sont partis : ils étaient trop loin dans la liste."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT *\nFROM clients\nLIMIT 5;"
+        },
+        {
+          "block_type": "text",
+          "content": "Seul, LIMIT 5 prend les 5 premières lignes dans l'ordre actuel. Combiné à un tri, il devient un « top N ». C'est la leçon suivante."
+        },
+        {
+          "block_type": "callout",
+          "content": "LIMIT 5 veut dire « au plus 5 ». S'il n'y a que 3 lignes, vous en voyez 3. Pas d'erreur."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "LIMIT s'écrit tout à la fin de la requête. C'est un ciseau, pas un WHERE."
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "title": "Combiner ORDER BY et LIMIT",
+      "description": "Trier d'abord, couper ensuite : le podium.",
+      "lesson_type": "lesson",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Objectif"
+        },
+        {
+          "block_type": "text",
+          "content": "Vous écrivez « les 5 plus âgés » ou « les 3 plus chers » en une phrase SQL."
+        },
+        {
+          "block_type": "heading",
+          "content": "L'ordre des clauses"
+        },
+        {
+          "block_type": "text",
+          "content": "SQL lit : SELECT, FROM, WHERE, ORDER BY, LIMIT. On trie toute la liste, puis on garde le début. Inverser cette logique dans votre tête (« je coupe puis je trie ») donnerait un mauvais podium."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT *\nFROM clients\nORDER BY age DESC\nLIMIT 5;"
+        },
+        {
+          "block_type": "text",
+          "content": "Les cinq plus âgés : Louis 40, Nathan 35, Lucas 31, Hugo 28, Emma 24. Même idée sur les produits : ORDER BY prix DESC LIMIT 5 pour les cinq plus chers."
+        },
+        {
+          "block_type": "code",
+          "content": "SELECT nom, prix\nFROM produits\nORDER BY prix DESC\nLIMIT 5;"
+        },
+        {
+          "block_type": "callout",
+          "content": "« Top 3 par âge » = les 3 plus âgés = ORDER BY age DESC LIMIT 3. DESC, pas ASC : sinon ce seraient les 3 plus jeunes."
+        },
+        {
+          "block_type": "heading",
+          "content": "À retenir"
+        },
+        {
+          "block_type": "text",
+          "content": "Podium = ORDER BY … DESC LIMIT N. Croissant + LIMIT = les plus petits / les moins chers."
+        }
+      ]
+    },
+    {
+      "position": 3,
+      "title": "Exercice : du plus jeune au plus âgé",
+      "description": "ORDER BY age ASC.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Toutes les colonnes, les 8 clients, du plus petit âge au plus grand. L'ordre fait partie de la réponse."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez tous les clients du plus jeune au plus âgé (âge croissant). Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM clients ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "7",
+                "Manon",
+                "Petit",
+                "17",
+                "Lyon"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "2",
+                "Hugo",
+                "Bernard",
+                "28",
+                "Lyon"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ]
+            ],
+            "orderRequired": true,
+            "hints": [
+              "Croissant = ASC.",
+              "ORDER BY age ASC"
+            ],
+            "solution": "SELECT * FROM clients ORDER BY age ASC;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "title": "Exercice : du plus âgé au plus jeune",
+      "description": "ORDER BY age DESC.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Même table, sens inverse. Louis en premier, Manon en dernier."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "facile",
+            "instructions": "Affichez tous les clients du plus âgé au plus jeune (âge décroissant). Toutes les colonnes.",
+            "starterQuery": "SELECT * FROM clients ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ],
+              [
+                "2",
+                "Hugo",
+                "Bernard",
+                "28",
+                "Lyon"
+              ],
+              [
+                "5",
+                "Emma",
+                "Robert",
+                "24",
+                "Paris"
+              ],
+              [
+                "1",
+                "Léa",
+                "Martin",
+                "22",
+                "Paris"
+              ],
+              [
+                "3",
+                "Chloé",
+                "Dubois",
+                "19",
+                "Paris"
+              ],
+              [
+                "7",
+                "Manon",
+                "Petit",
+                "17",
+                "Lyon"
+              ]
+            ],
+            "orderRequired": true,
+            "hints": [
+              "Décroissant = DESC.",
+              "ORDER BY age DESC"
+            ],
+            "solution": "SELECT * FROM clients ORDER BY age DESC;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "title": "Exercice : les 3 plus âgés",
+      "description": "ORDER BY age DESC LIMIT 3.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Trier d'abord, couper ensuite. Louis, Nathan, Lucas."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "intermediaire",
+            "instructions": "Affichez les 3 clients les plus âgés. Toutes les colonnes. Triez d'abord, limitez ensuite.",
+            "starterQuery": "SELECT * FROM clients ",
+            "expectedColumns": [
+              "id",
+              "prenom",
+              "nom",
+              "age",
+              "ville"
+            ],
+            "expectedResult": [
+              [
+                "8",
+                "Louis",
+                "Durand",
+                "40",
+                "Paris"
+              ],
+              [
+                "4",
+                "Nathan",
+                "Thomas",
+                "35",
+                "Marseille"
+              ],
+              [
+                "6",
+                "Lucas",
+                "Richard",
+                "31",
+                "Lille"
+              ]
+            ],
+            "orderRequired": true,
+            "hints": [
+              "Les plus âgés : ORDER BY age DESC.",
+              "Ajoutez LIMIT 3 tout à la fin."
+            ],
+            "solution": "SELECT * FROM clients ORDER BY age DESC LIMIT 3;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "title": "Exercice : les 5 produits les plus chers",
+      "description": "ORDER BY prix DESC LIMIT 5.",
+      "lesson_type": "sql_exercise",
+      "estimated_duration_minutes": 3,
+      "is_required": true,
+      "blocks": [
+        {
+          "block_type": "heading",
+          "content": "Mise en pratique"
+        },
+        {
+          "block_type": "text",
+          "content": "Même recette sur le catalogue : trier les prix vers le bas, garder cinq lignes."
+        },
+        {
+          "block_type": "sql_exercise",
+          "content": {
+            "difficulty": "application",
+            "instructions": "Affichez les 5 produits les plus chers, du prix le plus élevé au plus bas. Toutes les colonnes de produits.",
+            "starterQuery": "SELECT * FROM produits ",
+            "expectedColumns": [
+              "id",
+              "nom",
+              "categorie",
+              "prix",
+              "stock"
+            ],
+            "expectedResult": [
+              [
+                "8",
+                "Veste laine",
+                "Vetements",
+                "99",
+                "6"
+              ],
+              [
+                "4",
+                "Clavier mecanique",
+                "Electronique",
+                "89",
+                "8"
+              ],
+              [
+                "1",
+                "Casque audio",
+                "Electronique",
+                "80",
+                "12"
+              ],
+              [
+                "5",
+                "Sac a dos",
+                "Accessoires",
+                "55",
+                "15"
+              ],
+              [
+                "6",
+                "Lampe de bureau",
+                "Maison",
+                "34",
+                "20"
+              ]
+            ],
+            "orderRequired": true,
+            "hints": [
+              "La table s'appelle produits, la colonne prix.",
+              "ORDER BY prix DESC LIMIT 5"
+            ],
+            "solution": "SELECT * FROM produits ORDER BY prix DESC LIMIT 5;",
+            "points": 4,
+            "practicalExam": false
+          }
+        }
+      ]
+    }
+  ]
+}

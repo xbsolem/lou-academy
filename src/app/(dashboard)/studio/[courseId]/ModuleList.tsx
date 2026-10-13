@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Module, Lesson } from "@/types/database";
+import type { Module, Lesson, LessonType } from "@/types/database";
 
 type ModuleWithLessons = Module & { lessons: (Lesson & { content_blocks: { id: string }[] })[] };
 
@@ -21,7 +21,7 @@ export default function ModuleList({
   onRenameModule: (id: string, title: string) => void;
   onDeleteModule: (id: string) => void;
   onMoveModule: (id: string, dir: "up" | "down") => void;
-  onAddLesson: (moduleId: string) => void;
+  onAddLesson: (moduleId: string, lessonType?: LessonType) => void;
   onDeleteLesson: (id: string) => void;
   onMoveLesson: (id: string, moduleId: string, dir: "up" | "down") => void;
   onSelectLesson: (id: string) => void;
@@ -137,26 +137,34 @@ export default function ModuleList({
               </div>
             ))}
 
-            <button
-              onClick={() => onAddLesson(mod.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "10px 12px",
-                border: "2px dashed var(--border)",
-                borderRadius: "var(--radius-sm)",
-                background: "transparent",
-                cursor: "pointer",
-                fontSize: "0.85rem",
-                color: "var(--text-light)",
-                fontFamily: "inherit",
-                width: "100%",
-                marginTop: 8,
-              }}
-            >
-              <i className="fas fa-plus" /> Ajouter une lecon
-            </button>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+              {([
+                { type: "lesson" as const, label: "Ajouter une leçon", icon: "fa-file-alt" },
+                { type: "quiz" as const, label: "Quiz", icon: "fa-question-circle" },
+                { type: "sql_exercise" as const, label: "Exercice SQL", icon: "fa-database" },
+              ]).map((item) => (
+                <button
+                  key={item.type}
+                  onClick={() => onAddLesson(mod.id, item.type)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "10px 12px",
+                    border: "2px dashed var(--border)",
+                    borderRadius: "var(--radius-sm)",
+                    background: "transparent",
+                    cursor: "pointer",
+                    fontSize: "0.85rem",
+                    color: "var(--text-light)",
+                    fontFamily: "inherit",
+                    flex: item.type === "lesson" ? 1 : undefined,
+                  }}
+                >
+                  <i className={`fas ${item.icon}`} /> {item.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       ))}
