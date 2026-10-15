@@ -2,6 +2,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { Profile } from "@/types/database";
 import DashboardShell from "@/components/layout/DashboardShell";
+import { isLearningMode, LEARNING_MODE_EVENT, type LearningMode } from "@/lib/learning-mode";
 
 export default async function DashboardLayout({
   children,
@@ -49,5 +50,25 @@ export default async function DashboardLayout({
     });
   }
 
-  return <DashboardShell profile={profile as Profile}>{children}</DashboardShell>;
+  let initialLearningMode: LearningMode | null = isLearningMode(profile.learning_mode)
+    ? profile.learning_mode
+    : null;
+  if (!initialLearningMode) {
+    const { data: modeEvent } = await supabase
+      .from("activity_events")
+      .select("metadata")
+      .eq("user_id", user.id)
+      .eq("event_type", LEARNING_MODE_EVENT)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const fromEvent = (modeEvent?.metadata as { mode?: unknown } | null)?.mode;
+    if (isLearningMode(fromEvent)) initialLearningMode = fromEvent;
+  }
+
+  return (
+    <DashboardShell profile={profile as Profile} initialLearningMode={initialLearningMode}>
+      {children}
+    </DashboardShell>
+  );
 }

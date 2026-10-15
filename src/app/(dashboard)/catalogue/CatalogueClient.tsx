@@ -78,7 +78,7 @@ export default function CatalogueClient({
         </p>
       )}
 
-      <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
+      <div className="chip-scroll" style={{ marginBottom: 24 }}>
         {categories.map((cat) => (
           <button
             key={cat}

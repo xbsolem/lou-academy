@@ -2,6 +2,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import EspaceForm from "./EspaceForm";
+import LearningModePicker from "@/components/learning/LearningModePicker";
 
 function asCourse(raw: unknown) {
   const row = Array.isArray(raw) ? raw[0] : raw;
@@ -84,6 +85,10 @@ export default async function EspacePage() {
           <strong style={{ fontSize: "1.5rem" }}>{certificates?.length ?? 0}</strong>
           <span style={{ color: "var(--text-light)", fontSize: "0.85rem" }}>Attestations obtenues</span>
         </div>
+      </div>
+
+      <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 28 }}>
+        <LearningModePicker />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 28 }}>

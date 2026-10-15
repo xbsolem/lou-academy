@@ -196,7 +196,7 @@ export default function Topbar({
         <input
           ref={searchRef}
           type="search"
-          placeholder="Rechercher une formation, une catégorie…"
+          placeholder="Rechercher…"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);

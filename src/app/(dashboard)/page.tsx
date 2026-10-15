@@ -60,7 +60,7 @@ async function LearnerHome({
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
+      <div className="action-row" style={{ marginBottom: 28 }}>
         <Link href="/catalogue" style={primaryBtnStyle}>
           <i className="fas fa-book-open" /> Catalogue
         </Link>

@@ -9,6 +9,7 @@ import SqlPracticalTest from "@/components/ui/SqlPracticalTest";
 import AiTutor from "@/components/ui/AiTutor";
 import { parseSqlExerciseData } from "@/lib/sql-exercise-data";
 import { canIssueCertificate, computeProgressPercent, isPracticalLesson } from "@/lib/completion";
+import { xpFromCompletedLessons } from "@/lib/learning-mode";
 
 type LessonFull = Lesson & { content_blocks: ContentBlock[] };
 type ModuleFull = Module & { lessons: LessonFull[] };
@@ -41,6 +42,22 @@ export default function PlayerClient({
   const supabase = createClient();
 
   const allLessons = useMemo(() => modules.flatMap((m) => m.lessons), [modules]);
+  const completedCount = useMemo(
+    () => allLessons.filter((lesson) => progress[lesson.id] === "completed").length,
+    [allLessons, progress]
+  );
+  const coursePercent = allLessons.length
+    ? Math.round((completedCount / allLessons.length) * 100)
+    : 0;
+  const xpState = xpFromCompletedLessons(completedCount);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const apply = () => setSidebarOpen(!mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   const activeLessonId = activeLesson?.id;
 
@@ -239,7 +256,23 @@ export default function PlayerClient({
       <div className="player-content">
         {activeLesson ? (
           <div>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 24 }}>{activeLesson.title}</h2>
+            <h2 className="player-lesson-title">{activeLesson.title}</h2>
+            <div className="player-progress-strip">
+              <div className="player-progress-meta">
+                <span>
+                  {completedCount} / {allLessons.length} leçons · {coursePercent} %
+                </span>
+                <span className="mode-engaged">
+                  Palier {xpState.level} · {xpState.xp} pts
+                </span>
+              </div>
+              <div className="player-progress-track">
+                <div className="player-progress-fill" style={{ width: `${coursePercent}%` }} />
+              </div>
+              <div className="mode-engaged player-progress-track player-progress-track-xp">
+                <div className="player-progress-fill" style={{ width: `${xpState.xpInLevel}%` }} />
+              </div>
+            </div>
 
             {blocksLoading && (
               <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24, textAlign: "center", color: "var(--text-light)" }}>

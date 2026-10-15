@@ -227,19 +227,22 @@ export default function QuizPlayer({
   if (submitted) {
     return (
       <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", textAlign: "center" }}>
-        <div style={{ fontSize: "4rem", marginBottom: 16 }}>
-          {passed ? <i className="fas fa-trophy" style={{ color: "var(--success)" }} /> : <i className="fas fa-times-circle" style={{ color: "var(--danger)" }} />}
+        <div className={`quiz-result-icon${passed ? " success" : ""}`} style={{ fontSize: "4rem", marginBottom: 16 }}>
+          {passed ? <i className="fas fa-check-circle" style={{ color: "var(--success)" }} /> : <i className="fas fa-times-circle" style={{ color: "var(--danger)" }} />}
         </div>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 8 }}>
-          {passed ? "Félicitations !" : "Dommage..."}
+        <h2 className="mode-calm" style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 8 }}>
+          {passed ? "Quiz réussi" : "À revoir"}
+        </h2>
+        <h2 className="mode-engaged" style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 8 }}>
+          {passed ? "Bravo, vous avez validé cette étape" : "Pas encore validé"}
         </h2>
         <p style={{ fontSize: "1.1rem", marginBottom: 8 }}>
-          Score: <strong>{score}%</strong>
+          Score : <strong>{score}%</strong>
         </p>
         <p style={{ color: "var(--text-light)", marginBottom: 24 }}>
           {passed
-            ? "Vous avez réussi ce quiz."
-            : `Score requis: ${passingScore}%. Réessayez !`}
+            ? "Vos réponses ont été enregistrées."
+            : `Score requis : ${passingScore} %. Relisez les explications puis réessayez.`}
         </p>
 
         <div style={{ textAlign: "left", marginBottom: 24 }}>

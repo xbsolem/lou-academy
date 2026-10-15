@@ -1,5 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import LearningModePicker from "@/components/learning/LearningModePicker";
 
 export default async function ParametresPage() {
   const supabase = await createServerSupabase();
@@ -13,6 +14,10 @@ export default async function ParametresPage() {
     <>
       <h1 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 8 }}>Parametres</h1>
       <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>Configurez votre plateforme LMS</p>
+
+      <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 24 }}>
+        <LearningModePicker />
+      </div>
 
       <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 24 }}>
         <h3 style={{ fontSize: "1.1rem", marginBottom: 20, paddingBottom: 12, borderBottom: "1px solid var(--border)" }}>

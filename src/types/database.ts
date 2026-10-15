@@ -20,6 +20,7 @@ export interface Profile {
   target_role?: string | null;
   current_project?: string | null;
   career_goal?: string | null;
+  learning_mode?: "engaged" | "calm" | null;
 }
 
 export interface Course {
