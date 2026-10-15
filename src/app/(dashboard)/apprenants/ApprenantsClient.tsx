@@ -11,12 +11,14 @@ type LearnerWithEnroll = Profile & {
 
 export default function ApprenantsClient({
   learners: initial,
+  initialSearch = "",
 }: {
   learners: LearnerWithEnroll[];
+  initialSearch?: string;
 }) {
   const [learners, setLearners] = useState(initial);
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
 

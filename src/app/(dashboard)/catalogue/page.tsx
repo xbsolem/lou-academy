@@ -1,7 +1,12 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import CatalogueClient from "./CatalogueClient";
 
-export default async function CataloguePage() {
+export default async function CataloguePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
   const supabase = await createServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -21,6 +26,7 @@ export default async function CataloguePage() {
     <CatalogueClient
       courses={courses || []}
       enrolledCourseIds={Array.from(enrolledIds)}
+      initialQuery={q || ""}
     />
   );
 }

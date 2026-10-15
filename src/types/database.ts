@@ -17,6 +17,9 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   last_activity_at: string | null;
+  target_role?: string | null;
+  current_project?: string | null;
+  career_goal?: string | null;
 }
 
 export interface Course {

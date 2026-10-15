@@ -2,6 +2,8 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import PlayerClient from "./PlayerClient";
 
+const PROGRESS_CHUNK = 120;
+
 export default async function PlayerPage({
   params,
   searchParams,
@@ -24,25 +26,30 @@ export default async function PlayerPage({
 
   const { data: modules } = await supabase
     .from("modules")
-    .select("*, lessons(*, content_blocks(*))")
+    .select("*, lessons(*)")
     .eq("course_id", courseId)
     .order("position")
-    .order("position", { referencedTable: "lessons" })
-    .order("position", { referencedTable: "lessons.content_blocks" });
+    .order("position", { referencedTable: "lessons" });
+
+  const outline = (modules || []).map((mod) => ({
+    ...mod,
+    lessons: [...(mod.lessons || [])]
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      .map((lesson) => ({ ...lesson, content_blocks: [] })),
+  }));
 
   const { data: { user } } = await supabase.auth.getUser();
 
   let lessonProgressMap: Record<string, string> = {};
   if (user && !isPreview) {
-    const allLessonIds = (modules || []).flatMap((m) =>
-      (m.lessons || []).map((l: { id: string }) => l.id)
-    );
-    if (allLessonIds.length > 0) {
+    const allLessonIds = outline.flatMap((m) => m.lessons.map((l: { id: string }) => l.id));
+    for (let i = 0; i < allLessonIds.length; i += PROGRESS_CHUNK) {
+      const slice = allLessonIds.slice(i, i + PROGRESS_CHUNK);
       const { data: progress } = await supabase
         .from("lesson_progress")
         .select("lesson_id, status")
         .eq("user_id", user.id)
-        .in("lesson_id", allLessonIds);
+        .in("lesson_id", slice);
       if (progress) {
         progress.forEach((p) => {
           lessonProgressMap[p.lesson_id] = p.status;
@@ -54,7 +61,7 @@ export default async function PlayerPage({
   return (
     <PlayerClient
       course={course}
-      modules={modules || []}
+      modules={outline}
       lessonProgress={lessonProgressMap}
       isPreview={isPreview}
     />

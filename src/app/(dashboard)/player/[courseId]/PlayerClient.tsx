@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Course, Module, Lesson, ContentBlock } from "@/types/database";
 import QuizPlayer from "@/components/ui/QuizPlayer";
@@ -32,12 +32,53 @@ export default function PlayerClient({
   const [activeLesson, setActiveLesson] = useState<LessonFull | null>(
     modules[0]?.lessons?.[0] || null
   );
+  const [activeBlocks, setActiveBlocks] = useState<ContentBlock[]>([]);
+  const [blocksLoading, setBlocksLoading] = useState(Boolean(modules[0]?.lessons?.[0]));
   const [completing, setCompleting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sqlSuccess, setSqlSuccess] = useState<Record<string, boolean>>({});
+  const blockCache = useRef<Record<string, ContentBlock[]>>({});
   const supabase = createClient();
 
   const allLessons = useMemo(() => modules.flatMap((m) => m.lessons), [modules]);
+
+  const activeLessonId = activeLesson?.id;
+
+  useEffect(() => {
+    if (!activeLessonId) {
+      setActiveBlocks([]);
+      setBlocksLoading(false);
+      return;
+    }
+    const cached = blockCache.current[activeLessonId];
+    if (cached) {
+      setActiveBlocks(cached);
+      setBlocksLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setBlocksLoading(true);
+    setActiveBlocks([]);
+    (async () => {
+      const { data } = await supabase
+        .from("content_blocks")
+        .select("*")
+        .eq("lesson_id", activeLessonId)
+        .order("position");
+      if (cancelled) return;
+      const blocks = data || [];
+      blockCache.current[activeLessonId] = blocks;
+      setActiveBlocks(blocks);
+      setBlocksLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeLessonId]);
+
+  const lessonWithBlocks: LessonFull | null = activeLesson
+    ? { ...activeLesson, content_blocks: activeBlocks }
+    : null;
 
   const markComplete = useCallback(async (options?: { advance?: boolean; lesson?: LessonFull }) => {
     const lesson = options?.lesson || activeLesson;
@@ -116,12 +157,12 @@ export default function PlayerClient({
   };
 
   const currentIdx = activeLesson ? allLessons.findIndex((l) => l.id === activeLesson.id) : -1;
-  const sqlBlocks = activeLesson ? sqlBlocksOf(activeLesson) : [];
-  const practical = activeLesson ? isPracticalLesson(activeLesson) : false;
+  const sqlBlocks = lessonWithBlocks ? sqlBlocksOf(lessonWithBlocks) : [];
+  const practical = lessonWithBlocks ? isPracticalLesson(lessonWithBlocks) : false;
   const parsedExercises = sqlBlocks
     .map((block) => ({ block, data: parseSqlExerciseData(block.content) }))
     .filter((item): item is { block: ContentBlock; data: NonNullable<ReturnType<typeof parseSqlExerciseData>> } => Boolean(item.data));
-  const displayBlocks = (activeLesson?.content_blocks || []).filter(
+  const displayBlocks = activeBlocks.filter(
     (block) => block.block_type !== "sql_exercise" && block.block_type !== "quiz"
   );
   const isQuiz = activeLesson?.lesson_type === "quiz";
@@ -129,6 +170,7 @@ export default function PlayerClient({
   const lessonComplete = activeLesson ? progress[activeLesson.id] === "completed" : false;
   const showFinish =
     !isPreview &&
+    !blocksLoading &&
     activeLesson &&
     !lessonComplete &&
     !isQuiz &&
@@ -136,6 +178,7 @@ export default function PlayerClient({
     !(activeLesson.lesson_type === "sql_exercise");
   const showGatedSqlFinish =
     !isPreview &&
+    !blocksLoading &&
     activeLesson &&
     !lessonComplete &&
     activeLesson.lesson_type === "sql_exercise" &&
@@ -198,7 +241,13 @@ export default function PlayerClient({
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 24 }}>{activeLesson.title}</h2>
 
-            {displayBlocks.length > 0 && (
+            {blocksLoading && (
+              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24, textAlign: "center", color: "var(--text-light)" }}>
+                Chargement de la leçon…
+              </div>
+            )}
+
+            {!blocksLoading && displayBlocks.length > 0 && (
               <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
                 {displayBlocks.map((block) => (
                   <div key={block.id} style={{ marginBottom: 20 }}>
@@ -230,7 +279,7 @@ export default function PlayerClient({
               </div>
             )}
 
-            {isQuiz && (
+            {!blocksLoading && isQuiz && (
               <div style={{ marginBottom: 24 }}>
                 <QuizPlayer
                   lessonId={activeLesson.id}
@@ -244,7 +293,7 @@ export default function PlayerClient({
               </div>
             )}
 
-            {!isQuiz && practical && parsedExercises.length > 0 && (
+            {!blocksLoading && !isQuiz && practical && parsedExercises.length > 0 && (
               <div style={{ marginBottom: 24 }}>
                 <SqlPracticalTest
                   lessonId={activeLesson.id}
@@ -259,7 +308,7 @@ export default function PlayerClient({
               </div>
             )}
 
-            {!isQuiz && !practical && parsedExercises.map((item) => (
+            {!blocksLoading && !isQuiz && !practical && parsedExercises.map((item) => (
               <div key={item.block.id} style={{ marginBottom: 24 }}>
                 <SqlExercise
                   lessonId={activeLesson.id}
@@ -275,7 +324,7 @@ export default function PlayerClient({
               </div>
             ))}
 
-            {!isQuiz && !isSqlLesson && displayBlocks.length === 0 && (
+            {!blocksLoading && !isQuiz && !isSqlLesson && displayBlocks.length === 0 && (
               <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
                 <div style={{ textAlign: "center", padding: 40, color: "var(--text-light)" }}>
                   <i className="fas fa-file-alt" style={{ fontSize: "3rem", color: "var(--border)", marginBottom: 12, display: "block" }} />
@@ -358,7 +407,7 @@ export default function PlayerClient({
         <AiTutor
           courseTitle={course.title}
           lessonTitle={activeLesson?.title || ""}
-          lessonContent={activeLesson?.content_blocks?.map((b) => b.content).join("\n") || ""}
+          lessonContent={activeBlocks.map((b) => b.content).join("\n") || ""}
         />
       )}
     </div>

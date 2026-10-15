@@ -10,18 +10,29 @@ type CourseWithRels = Course & { modules: { id: string }[]; enrollments: { id: s
 export default function CatalogueClient({
   courses,
   enrolledCourseIds,
+  initialQuery = "",
 }: {
   courses: CourseWithRels[];
   enrolledCourseIds: string[];
+  initialQuery?: string;
 }) {
   const [enrolled, setEnrolled] = useState<Set<string>>(new Set(enrolledCourseIds));
   const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState(initialQuery);
   const [enrolling, setEnrolling] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
 
   const categories: string[] = ["all", ...new Set(courses.map((c) => c.category).filter((c): c is string => !!c))];
-  const filtered = filter === "all" ? courses : courses.filter((c) => c.category === filter);
+  const filtered = (filter === "all" ? courses : courses.filter((c) => c.category === filter)).filter((c) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      c.title.toLowerCase().includes(q) ||
+      (c.description || "").toLowerCase().includes(q) ||
+      (c.category || "").toLowerCase().includes(q)
+    );
+  });
 
   const handleEnroll = async (courseId: string) => {
     setEnrolling(courseId);
@@ -53,6 +64,19 @@ export default function CatalogueClient({
       <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>
         {courses.length} formations disponibles
       </p>
+
+      {query && (
+        <p style={{ marginBottom: 16, fontSize: "0.9rem", color: "var(--text-light)" }}>
+          Filtre : « {query} » · {filtered.length} résultat{filtered.length > 1 ? "s" : ""}
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            style={{ marginLeft: 10, border: "none", background: "none", color: "var(--primary)", cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}
+          >
+            Effacer
+          </button>
+        </p>
+      )}
 
       <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
         {categories.map((cat) => (

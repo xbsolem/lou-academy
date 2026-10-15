@@ -67,6 +67,12 @@ async function LearnerHome({
         <Link href="/mes-formations" style={secondaryBtnStyle}>
           <i className="fas fa-play-circle" /> Mes formations
         </Link>
+        <Link href="/espace" style={secondaryBtnStyle}>
+          <i className="fas fa-user-circle" /> Mon espace
+        </Link>
+        <Link href="/suggestions" style={secondaryBtnStyle}>
+          <i className="fas fa-lightbulb" /> Suggestions
+        </Link>
       </div>
 
       <h2 style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: 16 }}>Continuer</h2>

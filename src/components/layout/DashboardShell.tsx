@@ -22,7 +22,7 @@ export default function DashboardShell({
         onClose={() => setSidebarOpen(false)}
       />
       <main className="dashboard-main">
-        <Topbar onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+        <Topbar profile={profile} onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
         <div className="dashboard-main-inner">{children}</div>
       </main>
     </div>

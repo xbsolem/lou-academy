@@ -7,8 +7,10 @@ import type { Profile } from "@/types/database";
 const menuItems = [
   { path: "/", icon: "fa-th-large", label: "Tableau de bord", roles: ["admin", "creator"] },
   { path: "/", icon: "fa-home", label: "Accueil", roles: ["learner"] },
+  { path: "/espace", icon: "fa-user-circle", label: "Mon espace" },
   { path: "/catalogue", icon: "fa-book-open", label: "Catalogue" },
   { path: "/mes-formations", icon: "fa-play-circle", label: "Mes formations" },
+  { path: "/suggestions", icon: "fa-lightbulb", label: "Suggestions" },
   { path: "/studio", icon: "fa-plus-circle", label: "Course Studio", roles: ["admin", "creator"] },
   { path: "/apprenants", icon: "fa-users", label: "Apprenants", roles: ["admin"] },
   { path: "/rapports", icon: "fa-chart-bar", label: "Rapports", roles: ["admin", "creator"] },
