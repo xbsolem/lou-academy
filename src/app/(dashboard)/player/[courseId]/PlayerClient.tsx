@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Course, Module, Lesson, ContentBlock } from "@/types/database";
+import type { Course, CourseMission, Module, Lesson, ContentBlock, SkillDefinition } from "@/types/database";
 import QuizPlayer from "@/components/ui/QuizPlayer";
 import SqlExercise from "@/components/ui/SqlExercise";
 import SqlPracticalTest from "@/components/ui/SqlPracticalTest";
@@ -10,6 +10,9 @@ import AiTutor from "@/components/ui/AiTutor";
 import { parseSqlExerciseData } from "@/lib/sql-exercise-data";
 import { canIssueCertificate, computeProgressPercent, isPracticalLesson } from "@/lib/completion";
 import { xpFromCompletedLessons } from "@/lib/learning-mode";
+import { recordPracticeSuccess } from "@/lib/octalysis/award";
+import MissionCard from "@/components/octalysis/MissionCard";
+import ProgressLayers from "@/components/octalysis/ProgressLayers";
 
 type LessonFull = Lesson & { content_blocks: ContentBlock[] };
 type ModuleFull = Module & { lessons: LessonFull[] };
@@ -23,11 +26,17 @@ export default function PlayerClient({
   modules,
   lessonProgress: initialProgress,
   isPreview,
+  missions = [],
+  skills = [],
+  initialSkillCount = 0,
 }: {
   course: Course;
   modules: ModuleFull[];
   lessonProgress: Record<string, string>;
   isPreview: boolean;
+  missions?: CourseMission[];
+  skills?: SkillDefinition[];
+  initialSkillCount?: number;
 }) {
   const [progress, setProgress] = useState(initialProgress);
   const [activeLesson, setActiveLesson] = useState<LessonFull | null>(
@@ -38,6 +47,7 @@ export default function PlayerClient({
   const [completing, setCompleting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sqlSuccess, setSqlSuccess] = useState<Record<string, boolean>>({});
+  const [skillCount, setSkillCount] = useState(initialSkillCount);
   const blockCache = useRef<Record<string, ContentBlock[]>>({});
   const supabase = createClient();
 
@@ -122,15 +132,21 @@ export default function PlayerClient({
     const pct = computeProgressPercent(allLessons, nextProgress);
     const issueCert = canIssueCertificate(allLessons, nextProgress);
 
-    await supabase.from("enrollments").upsert({
+    const enrollPayload = {
       user_id: user.id,
       course_id: course.id,
       status: issueCert ? "completed" : "in_progress",
       progress_percent: pct,
       started_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
+      last_lesson_id: lesson.id,
       ...(issueCert ? { completed_at: new Date().toISOString() } : {}),
-    }, { onConflict: "user_id,course_id" });
+    };
+    const { error: enrollError } = await supabase.from("enrollments").upsert(enrollPayload, { onConflict: "user_id,course_id" });
+    if (enrollError) {
+      const { last_lesson_id: _omit, ...withoutLesson } = enrollPayload;
+      await supabase.from("enrollments").upsert(withoutLesson, { onConflict: "user_id,course_id" });
+    }
 
     if (issueCert) {
       const { data: existingCert } = await supabase
@@ -168,9 +184,39 @@ export default function PlayerClient({
     setCompleting(false);
   }, [activeLesson, isPreview, supabase, allLessons, progress, course.id, course.estimated_duration_minutes, course.title]);
 
+  const rememberLesson = useCallback(async (lessonId: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.from("enrollments").update({
+      last_lesson_id: lessonId,
+      last_activity_at: new Date().toISOString(),
+    }).eq("user_id", user.id).eq("course_id", course.id);
+    if (error) {
+      await supabase.from("enrollments").update({
+        last_activity_at: new Date().toISOString(),
+      }).eq("user_id", user.id).eq("course_id", course.id);
+    }
+  }, [course.id, supabase]);
+
+  const awardPractice = useCallback(async (lessonId: string, source: "quiz_pass" | "sql_success", score?: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const awarded = await recordPracticeSuccess(supabase, {
+      userId: user.id,
+      lessonId,
+      courseId: course.id,
+      source,
+      score,
+    });
+    if (awarded.skillsUpdated > 0) {
+      setSkillCount((n) => n + awarded.skillsUpdated);
+    }
+  }, [course.id, supabase]);
+
   const goToLesson = (lesson: LessonFull) => {
     setActiveLesson(lesson);
     setSidebarOpen(false);
+    if (!isPreview) void rememberLesson(lesson.id);
   };
 
   const currentIdx = activeLesson ? allLessons.findIndex((l) => l.id === activeLesson.id) : -1;
@@ -246,7 +292,12 @@ export default function PlayerClient({
                   ) : (
                     <i className="far fa-circle" style={{ color: "var(--text-lighter)", width: 16 }} />
                   )}
-                  <span style={{ flex: 1 }}>{lesson.title}</span>
+                  <span style={{ flex: 1 }}>
+                    {lesson.title}
+                    {!lesson.is_required && (
+                      <span className="lesson-optional-tag"> · facultatif</span>
+                    )}
+                  </span>
                 </div>
               );
             })}
@@ -258,6 +309,35 @@ export default function PlayerClient({
         {activeLesson ? (
           <div>
             <h2 className="player-lesson-title">{activeLesson.title}</h2>
+            {(() => {
+              const courseMission = missions.find((m) => !m.module_id);
+              const moduleMission = missions.find((m) => m.module_id === activeLesson.module_id);
+              const showCourse = Boolean(courseMission) && completedCount === 0;
+              const currentModule = modules.find((m) => m.id === activeLesson.module_id);
+              const moduleLessons = currentModule?.lessons || [];
+              const moduleDone = moduleLessons.filter((l) => progress[l.id] === "completed").length;
+              const modulePercent = moduleLessons.length
+                ? Math.round((moduleDone / moduleLessons.length) * 100)
+                : 0;
+              return (
+                <>
+                  {showCourse && courseMission && <MissionCard mission={courseMission} />}
+                  {moduleMission && (
+                    <MissionCard
+                      mission={moduleMission}
+                      compact
+                      stepLabel={moduleMission.kind === "advanced" ? "Approfondissement facultatif" : "Étape de mission"}
+                    />
+                  )}
+                  <ProgressLayers
+                    lessonLabel={lessonComplete ? "Terminée" : "En cours"}
+                    modulePercent={modulePercent}
+                    coursePercent={coursePercent}
+                    skillCount={skillCount || skills.length}
+                  />
+                </>
+              );
+            })()}
             <div className="player-progress-strip">
               <div className="player-progress-meta">
                 <span>
@@ -318,11 +398,18 @@ export default function PlayerClient({
                 <QuizPlayer
                   lessonId={activeLesson.id}
                   isPreview={isPreview}
-                  onComplete={async (passed) => {
+                  onComplete={async (passed, score) => {
                     if (passed && !isPreview) {
                       await markComplete({ advance: false, lesson: activeLesson });
+                      await awardPractice(activeLesson.id, "quiz_pass", score);
                     }
                   }}
+                  workplaceHint={
+                    missions.find((m) => m.module_id === activeLesson.module_id)?.outcome
+                    || missions.find((m) => !m.module_id)?.outcome
+                    || skills[0]?.workplace_application
+                    || undefined
+                  }
                 />
               </div>
             )}
@@ -336,6 +423,7 @@ export default function PlayerClient({
                   onComplete={async (passed) => {
                     if (passed && !isPreview) {
                       await markComplete({ advance: false, lesson: activeLesson });
+                      await awardPractice(activeLesson.id, "sql_success", passed ? 100 : 0);
                     }
                   }}
                 />
@@ -352,6 +440,7 @@ export default function PlayerClient({
                     setSqlSuccess((prev) => ({ ...prev, [activeLesson.id]: true }));
                     if (!isPreview) {
                       void markComplete({ advance: false, lesson: activeLesson });
+                      void awardPractice(activeLesson.id, "sql_success", 100);
                     }
                   }}
                 />

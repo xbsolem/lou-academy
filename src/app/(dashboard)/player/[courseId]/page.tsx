@@ -1,6 +1,7 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import PlayerClient from "./PlayerClient";
+import { loadCourseJourney } from "@/lib/octalysis/load-learner";
 
 const PROGRESS_CHUNK = 120;
 
@@ -58,12 +59,30 @@ export default async function PlayerPage({
     }
   }
 
+  const journey = await loadCourseJourney(courseId);
+  let courseSkillCount = 0;
+  if (user && !isPreview) {
+    const { data: skillRows, error: skillError } = await supabase
+      .from("user_skills")
+      .select("id, skill_definitions!inner(course_id)")
+      .eq("user_id", user.id);
+    if (!skillError) {
+      courseSkillCount = (skillRows || []).filter((row) => {
+        const def = Array.isArray(row.skill_definitions) ? row.skill_definitions[0] : row.skill_definitions;
+        return (def as { course_id?: string } | null)?.course_id === courseId;
+      }).length;
+    }
+  }
+
   return (
     <PlayerClient
       course={course}
       modules={outline}
       lessonProgress={lessonProgressMap}
       isPreview={isPreview}
+      missions={journey.missions}
+      skills={journey.skills}
+      initialSkillCount={courseSkillCount}
     />
   );
 }

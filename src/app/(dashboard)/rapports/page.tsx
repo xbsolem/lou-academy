@@ -29,6 +29,10 @@ export default async function RapportsPage() {
     { data: requests },
     { count: enrollments7d },
     { data: newProfiles },
+    { count: quizAttemptsCount },
+    { count: quizPassedCount },
+    { count: revisionOptIn },
+    { count: skillRows },
   ] = await Promise.all([
     supabase.from("enrollments").select("*", { count: "exact", head: true }).eq("status", "completed"),
     supabase.from("enrollments").select("progress_percent, status, last_activity_at, enrolled_at, user_id, course_id"),
@@ -46,6 +50,10 @@ export default async function RapportsPage() {
       .limit(50),
     supabase.from("enrollments").select("id", { count: "exact", head: true }).gte("enrolled_at", weekAgo),
     supabase.from("profiles").select("id").eq("role", "learner").gte("created_at", weekAgo),
+    supabase.from("quiz_attempts").select("id", { count: "exact", head: true }).not("completed_at", "is", null),
+    supabase.from("quiz_attempts").select("id", { count: "exact", head: true }).eq("passed", true),
+    supabase.from("profiles").select("id", { count: "exact", head: true }).eq("revision_reminders", true),
+    supabase.from("user_skills").select("id", { count: "exact", head: true }),
   ]);
 
   const allEnroll = enrollments || [];
@@ -99,13 +107,17 @@ export default async function RapportsPage() {
     { icon: "fa-certificate", color: "#06b6d4", bg: "#ecfeff", value: certCount ?? 0, label: "Attestations délivrées" },
     { icon: "fa-lightbulb", color: "#d97706", bg: "#fffbeb", value: requests?.length ?? 0, label: "Suggestions (échantillon)" },
     { icon: "fa-users", color: "#4f46e5", bg: "#eff6ff", value: learnersTotal ?? 0, label: "Apprenants inscrits" },
+    { icon: "fa-list-check", color: "#4f46e5", bg: "#eff6ff", value: quizAttemptsCount ?? 0, label: "Quiz soumis" },
+    { icon: "fa-circle-check", color: "#10b981", bg: "#ecfdf5", value: quizPassedCount ?? 0, label: "Quiz réussis" },
+    { icon: "fa-screwdriver-wrench", color: "#0f766e", bg: "#ecfdf5", value: skillRows ?? 0, label: "Compétences enregistrées" },
+    { icon: "fa-bell", color: "#64748b", bg: "#f8fafc", value: revisionOptIn ?? 0, label: "Rappels de révision (opt-in)" },
   ];
 
   return (
     <>
       <h1 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 8 }}>Rapports et indicateurs</h1>
       <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>
-        Connexions, démarrage, completion, besoins exprimés. Les volumes 7 jours et 30 jours aident à voir l&apos;usage réel, pas seulement les inscriptions.
+        Connexions, démarrage, completion, quiz et révisions. Les volumes mesurent l&apos;usage, pas l&apos;apprentissage. Un taux de connexion élevé ne signifie pas que les compétences sont acquises.
       </p>
 
       <div className="stats-grid" style={{ marginBottom: 32 }}>

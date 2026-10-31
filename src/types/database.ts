@@ -21,6 +21,7 @@ export interface Profile {
   current_project?: string | null;
   career_goal?: string | null;
   learning_mode?: "engaged" | "calm" | null;
+  revision_reminders?: boolean;
 }
 
 export interface Course {
@@ -85,6 +86,7 @@ export interface Enrollment {
   started_at: string | null;
   completed_at: string | null;
   last_activity_at: string | null;
+  last_lesson_id?: string | null;
 }
 
 export interface LessonProgress {
@@ -159,6 +161,108 @@ export interface AiGeneration {
   model: string | null;
   metadata: Record<string, unknown> | null;
   created_at: string;
+}
+
+export type MasteryLevel = 1 | 2 | 3 | 4 | 5;
+export type EvidenceType = "quiz_pass" | "sql_success" | "challenge_complete";
+export type ChallengeType = "quiz" | "sql" | "practical" | "case";
+export type ChallengeStatus = "available" | "in_progress" | "completed";
+export type MissionKind = "core" | "advanced";
+
+export interface CourseMission {
+  id: string;
+  course_id: string;
+  module_id: string | null;
+  title: string;
+  problem: string;
+  skills_summary: string;
+  situations: string;
+  outcome: string;
+  kind: MissionKind;
+  position: number;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface SkillDefinition {
+  id: string;
+  course_id: string;
+  slug: string;
+  title: string;
+  description: string;
+  workplace_application: string;
+  position: number;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface SkillEvidence {
+  id: string;
+  skill_id: string;
+  lesson_id: string;
+  evidence_type: EvidenceType;
+  weight: number;
+}
+
+export interface UserSkill {
+  id: string;
+  user_id: string;
+  skill_id: string;
+  mastery: MasteryLevel;
+  source: string | null;
+  updated_at: string;
+}
+
+export interface UserSkillEvent {
+  id: string;
+  user_id: string;
+  skill_id: string;
+  lesson_id: string | null;
+  evidence_type: EvidenceType;
+  score: number | null;
+  created_at: string;
+}
+
+export interface Badge {
+  id: string;
+  course_id: string | null;
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  criteria: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+  shared: boolean;
+}
+
+export interface Challenge {
+  id: string;
+  course_id: string;
+  lesson_id: string | null;
+  skill_id: string | null;
+  title: string;
+  description: string;
+  challenge_type: ChallengeType;
+  workplace_context: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface UserChallengeProgress {
+  id: string;
+  user_id: string;
+  challenge_id: string;
+  status: ChallengeStatus;
+  score: number | null;
+  completed_at: string | null;
+  updated_at: string;
 }
 
 export interface CourseSource {

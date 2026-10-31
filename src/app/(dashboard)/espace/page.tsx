@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import EspaceForm from "./EspaceForm";
 import LearningModePicker from "@/components/learning/LearningModePicker";
+import { loadLearnerJourney } from "@/lib/octalysis/load-learner";
+import PortfolioSection from "@/components/octalysis/PortfolioSection";
+import RevisionToggle from "@/components/octalysis/RevisionToggle";
 
 function asCourse(raw: unknown) {
   const row = Array.isArray(raw) ? raw[0] : raw;
@@ -22,7 +25,7 @@ export default async function EspacePage() {
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   if (!profile) redirect("/login");
 
-  const [{ data: enrollments }, { data: certificates }, { data: profilEvent }] = await Promise.all([
+  const [{ data: enrollments }, { data: certificates }, { data: profilEvent }, journey] = await Promise.all([
     supabase
       .from("enrollments")
       .select("status, progress_percent, last_activity_at, courses(id, title, estimated_duration_minutes, category)")
@@ -37,6 +40,7 @@ export default async function EspacePage() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    loadLearnerJourney(user.id),
   ]);
 
   const meta = (profilEvent?.metadata || {}) as {
@@ -89,6 +93,23 @@ export default async function EspacePage() {
 
       <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 28 }}>
         <LearningModePicker />
+      </div>
+
+      <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 28 }}>
+        <RevisionToggle userId={user.id} initial={Boolean(profile.revision_reminders)} />
+      </div>
+
+      <div style={{ marginBottom: 28 }}>
+        <PortfolioSection
+          skills={journey.skills}
+          badges={journey.badges}
+          cases={journey.deliverables}
+          courses={[
+            ...journey.completed.map((c) => ({ id: c.course.id, title: c.course.title, status: "completed", progress: c.progress })),
+            ...journey.inProgress.map((c) => ({ id: c.course.id, title: c.course.title, status: c.status, progress: c.progress })),
+          ]}
+          targetRole={targetRole}
+        />
       </div>
 
       <div className="fluid-grid" style={{ marginBottom: 28 }}>

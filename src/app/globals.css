@@ -1398,6 +1398,158 @@ html[data-learning-mode="engaged"] .mode-calm {
   }
 }
 
+.muted {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.inline-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.mission-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--primary);
+  margin-bottom: 16px;
+}
+.mission-card.compact { padding: 16px 18px; margin-bottom: 12px; }
+.mission-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+.mission-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.mission-card dl { display: grid; gap: 10px; }
+.mission-card dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.mission-card dd { font-size: 0.9rem; line-height: 1.55; }
+.mission-optional { margin-top: 12px; font-size: 0.82rem; color: var(--text-light); }
+.progress-layers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.progress-layer {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.progress-layer span { font-size: 0.72rem; color: var(--text-light); }
+.progress-layer strong { font-size: 0.85rem; }
+.skill-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.skill-chip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #eef2ff;
+}
+.skill-chip-title { font-weight: 600; font-size: 0.9rem; }
+.skill-chip-level {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.skill-chip-meta { flex-basis: 100%; font-size: 0.78rem; color: var(--text-light); }
+.journey-grid { margin-bottom: 8px; }
+.journey-block {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.journey-block h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; }
+.journey-sub { font-size: 0.9rem; margin: 16px 0 8px; }
+.journey-nudge { margin-top: 10px; font-size: 0.85rem; color: var(--primary); }
+.realization-list, .challenge-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.realization-list li { display: flex; gap: 10px; align-items: flex-start; }
+.realization-list i { color: var(--primary); margin-top: 4px; }
+.challenge-list a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.share-optin, .revision-toggle button, .secondary-btn, .primary-btn {
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.share-optin, .secondary-btn {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  margin-top: 8px;
+}
+.primary-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+}
+.revision-toggle h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.revision-toggle p { color: var(--text-light); font-size: 0.85rem; margin-bottom: 12px; line-height: 1.5; }
+.portfolio-reco { font-size: 0.9rem; margin-bottom: 20px; }
+.portfolio-section { margin-top: 8px; }
+.portfolio-section > h2 { font-size: 1.15rem; margin-bottom: 8px; }
+.octagon-studio { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+.octagon-checks { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 16px 0; }
+.octagon-checks li { font-size: 0.88rem; display: flex; gap: 8px; align-items: center; }
+.octagon-checks .on i { color: var(--success); }
+.octagon-checks .off i { color: var(--text-lighter); }
+.octagon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.octagon-drive span { font-size: 0.78rem; color: var(--text-light); display: block; margin-bottom: 4px; }
+.octagon-drive strong { font-size: 0.95rem; }
+.quiz-method {
+  text-align: left;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  background: #eef2ff;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.collab-stub {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.lesson-optional-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-card, .skill-chip, .journey-block {
+    transition: none;
+  }
+}
+
 @media (max-width: 360px) {
   .topbar {
     gap: 6px;

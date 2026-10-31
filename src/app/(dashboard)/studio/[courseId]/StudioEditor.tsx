@@ -12,6 +12,7 @@ import CourseInfoTab from "./CourseInfoTab";
 import SourcesTab from "./SourcesTab";
 import AnalyticsTab from "./AnalyticsTab";
 import EnrolleesTab from "./EnrolleesTab";
+import QualityTab from "./QualityTab";
 
 type ModuleWithLessons = Module & { lessons: (Lesson & { content_blocks: { id: string }[] })[] };
 
@@ -24,7 +25,7 @@ export default function StudioEditor({
 }) {
   const [course, setCourse] = useState(initialCourse);
   const [modules, setModules] = useState(initialModules);
-  const [activeTab, setActiveTab] = useState<"content" | "info" | "enrollees" | "sources" | "analytics" | "ai">("content");
+  const [activeTab, setActiveTab] = useState<"content" | "info" | "enrollees" | "sources" | "analytics" | "ai" | "quality">("content");
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
@@ -213,6 +214,7 @@ export default function StudioEditor({
     { id: "enrollees" as const, label: "Apprenants", icon: "fa-users" },
     { id: "sources" as const, label: "Sources", icon: "fa-folder-open" },
     { id: "analytics" as const, label: "Analytics", icon: "fa-chart-bar" },
+    { id: "quality" as const, label: "Qualité du parcours", icon: "fa-compass" },
     { id: "ai" as const, label: "IA", icon: "fa-wand-magic-sparkles" },
   ];
 
@@ -413,6 +415,14 @@ export default function StudioEditor({
       {activeTab === "sources" && <SourcesTab courseId={course.id} />}
 
       {activeTab === "analytics" && <AnalyticsTab courseId={course.id} />}
+
+      {activeTab === "quality" && (
+        <QualityTab
+          courseId={course.id}
+          quizLessonCount={modules.flatMap((m) => m.lessons).filter((l) => l.lesson_type === "quiz").length}
+          optionalLessonCount={modules.flatMap((m) => m.lessons).filter((l) => !l.is_required).length}
+        />
+      )}
 
       {activeTab === "ai" && (
         <AiWizard courseId={course.id} onDone={() => { setActiveTab("content"); refresh(); }} />

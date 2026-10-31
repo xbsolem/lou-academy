@@ -19,10 +19,12 @@ export default function QuizPlayer({
   lessonId,
   isPreview,
   onComplete,
+  workplaceHint,
 }: {
   lessonId: string;
   isPreview: boolean;
   onComplete?: (passed: boolean, score: number) => void;
+  workplaceHint?: string;
 }) {
   const [quizId, setQuizId] = useState<string | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
@@ -239,11 +241,23 @@ export default function QuizPlayer({
         <p style={{ fontSize: "1.1rem", marginBottom: 8 }}>
           Score : <strong>{score}%</strong>
         </p>
-        <p style={{ color: "var(--text-light)", marginBottom: 24 }}>
+        <p style={{ color: "var(--text-light)", marginBottom: 16 }}>
           {passed
-            ? "Vos réponses ont été enregistrées."
-            : `Score requis : ${passingScore} %. Relisez les explications puis réessayez.`}
+            ? "Vos réponses ont été enregistrées. La compétence se consolide par la réussite, pas par la seule ouverture de la leçon."
+            : `Score requis : ${passingScore} %. Relisez la méthode ci-dessous, puis réessayez pour consolider la compétence.`}
         </p>
+        <p className="mode-engaged" style={{ color: "var(--primary)", fontWeight: 600, marginBottom: 16 }}>
+          {passed
+            ? "Vous avez validé une étape professionnelle. Continuez au rythme qui vous convient."
+            : "Ce n'est pas un échec définitif. Un nouvel essai sert à améliorer la compétence."}
+        </p>
+        <div className="quiz-method">
+          <p><strong>Méthode.</strong> Pour chaque question, comparez votre choix à la correction, puis relisez l&apos;explication : elle décrit le raisonnement à retenir, pas seulement la bonne case.</p>
+          <p style={{ marginTop: 8 }}>
+            <strong>En situation de travail.</strong>{" "}
+            {workplaceHint || "Transposé en poste, ce type de question correspond à un geste que l'on justifie devant un manager, un collègue ou un outil — pas à un score isolé."}
+          </p>
+        </div>
 
         <div style={{ textAlign: "left", marginBottom: 24 }}>
           {questions.map((q, qi) => {
@@ -269,8 +283,13 @@ export default function QuizPlayer({
           <button onClick={retry}
             style={{ padding: "10px 24px", borderRadius: "var(--radius-sm)", background: "var(--primary)", color: "#fff", border: "none", cursor: "pointer", fontSize: "0.9rem", fontWeight: 500, fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 8 }}
           >
-            <i className="fas fa-redo" /> Réessayer
+            <i className="fas fa-redo" />
+            <span className="mode-calm">Réessayer</span>
+            <span className="mode-engaged">Réessayer pour consolider la compétence</span>
           </button>
+        )}
+        {passed && (
+          <p className="collab-stub">Solliciter un pair sur ce cas : bientôt disponible. Pas de classement public.</p>
         )}
       </div>
     );
