@@ -1,0 +1,17 @@
+FORMATION : Devenir recruteur — Maîtriser le recrutement de A à Z
+Slug : devenir-recruteur-a-z
+Date : 2026-10-13
+
+STATUT : COMPLET (repo + seed)
+- 24 modules, 201 leçons, 24 quiz, 291 questions
+- Examen final : 60 questions, seuil 80 %
+- 100 situations, modèles RH, projet Atelier Nord Lumière
+- Attestation LOU Academy ≠ diplôme d'État / RNCP
+
+IMPORT
+1. supabase/006a_seed_devenir_recruteur.sql
+2. supabase/006b_seed_devenir_recruteur.sql
+Idempotent. Ne touche pas le cours SQL.
+
+Régénérer : npm run seed:recrutement
+Sources : legal-sources.json (13/10/2026)

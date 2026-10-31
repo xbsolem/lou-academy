@@ -85,7 +85,7 @@ export default function AnalyticsTab({ courseId }: { courseId: string }) {
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
+      <div className="fluid-grid-sm" style={{ marginBottom: 24 }}>
         {statCards.map((s) => (
           <div key={s.label} style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 20, boxShadow: "var(--shadow)", textAlign: "center" }}>
             <i className={`fas ${s.icon}`} style={{ fontSize: "1.5rem", color: s.color, marginBottom: 8, display: "block" }} />
@@ -101,7 +101,7 @@ export default function AnalyticsTab({ courseId }: { courseId: string }) {
           <p>Aucun apprenant inscrit.</p>
         </div>
       ) : (
-        <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", overflow: "hidden", boxShadow: "var(--shadow)" }}>
+        <div className="table-responsive" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", boxShadow: "var(--shadow)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)" }}>

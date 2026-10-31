@@ -279,7 +279,7 @@ export default function Topbar({
           </div>
         )}
       </div>
-      <div style={{ display: "flex", gap: 8, marginLeft: "auto" }} ref={notifWrap}>
+      <div className="topbar-actions" ref={notifWrap}>
         <button
           type="button"
           className="topbar-bell"

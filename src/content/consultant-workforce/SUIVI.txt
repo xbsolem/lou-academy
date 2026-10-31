@@ -1,0 +1,19 @@
+FORMATION : Devenir consultant junior Workforce & Organization
+SLUG : consultant-junior-workforce-organization
+DURÉE REQUIRED : 300 minutes (tests OK)
+CAS : Groupe Nova Services, 1 200 salariés (fictif)
+NE PAS TOUCHER : SQL, recrutement, paie, chef-projet-marketing
+
+00-metier 20 OK
+01-strategie-org 25 OK
+02-methode-diagnostic 30 OK
+03-rh-analytics 35 OK
+04-swp 40 OK
+05-gepp-competences 30 OK
+06-org-tom 30 OK
+07-transfo-change 30 OK
+08-finance-livrables 30 OK
+09-mission-examen 30 OK (+ cas 50, 100 Q entretien, digital/droit : facultatif 0 min)
+
+Seed : supabase/009a_seed_consultant_workforce.sql + 009b
+Import : node scripts/import-workforce.mjs

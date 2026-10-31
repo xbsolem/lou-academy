@@ -129,13 +129,13 @@ export default function CatalogueClient({
                   <p style={{ color: "var(--text-light)", fontSize: "0.85rem", marginBottom: 12, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     {course.description || "Aucune description"}
                   </p>
-                  <div style={{ display: "flex", gap: 16, fontSize: "0.8rem", color: "var(--text-lighter)" }}>
+                  <div className="card-meta-row" style={{ fontSize: "0.8rem", color: "var(--text-lighter)" }}>
                     {dur && <span><i className="fas fa-clock" /> {dur}</span>}
                     <span><i className="fas fa-layer-group" /> {moduleCount} modules</span>
                     <span><i className="fas fa-users" /> {enrollCount}</span>
                   </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px", borderTop: "1px solid var(--border)" }}>
+                <div className="card-footer-row" style={{ padding: "12px 20px", borderTop: "1px solid var(--border)" }}>
                   <span style={{ fontSize: "0.75rem", padding: "4px 10px", borderRadius: 20, background: "#eff6ff", color: "var(--primary)", fontWeight: 500 }}>
                     {course.category || "Non categorise"}
                   </span>

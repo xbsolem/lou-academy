@@ -1,0 +1,12 @@
+{
+  "id": "dossier-07",
+  "name": "Inès Palacio",
+  "brut": 1287.1,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Entrée le 13/01/2026, contrat 2100 € mois plein. Brut de période = 2100 × 19/31 = 1287,10 € (prorataCalendar). DPAE (L. 1221-10) à vérifier avant paie. Moteur sur 1287,10 € : salarial 268,23 €, NI 1055,54 €, NAP/MNS 1018,87 €. Ne pas recycler 1662,35 €. Classification RH, CCN IDCC à lire."
+}

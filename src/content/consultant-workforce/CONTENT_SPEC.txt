@@ -1,0 +1,25 @@
+FORMATION 5 H — src/content/consultant-workforce/
+Les 30 thèmes du cahier sont COUVERTS en 10 modules compressés. Somme des minutes is_required !== false = EXACTEMENT 300.
+Quiz : minutes EXPLICITES. Cas fil rouge : Groupe Nova Services, 1200 salariés (fictif). Données RH = pédagogiques, jamais un benchmark réel inventé.
+36 k€ = objectif de marché, jamais une garantie. Attestation LOU ≠ RNCP ≠ certif Excel/Power BI.
+Junior ≠ juriste : GEPP, CSE, restructuration = principes + « vérifier Légifrance / avis social », pas d'invention de délais.
+Excel/Power BI : formules et CSV dans des blocs code, pas de prétendre ouvrir Power BI réel.
+Ne pas toucher : sql-pour-debutants-2h, devenir-recruteur-a-z, devenir-gestionnaire-de-paie, chef-projet-marketing-developpement.
+
+MINUTES
+00-metier              20 : 6+5+5 quiz 4     (cabinet, junior, 1re semaine)
+01-strategie-org       25 : 7+7+6 quiz 5     (stratégie, SWOT/PESTEL, structures, orgas)
+02-methode-diagnostic  30 : 8+8+9 quiz 5     (MECE, cadrage, diagnostic, entretiens)
+03-rh-analytics        35 : 7+10+10 quiz 8   (RH, ETP/turnover/pyramide, Excel formules)
+04-swp                 40 : 10+12+10 quiz 8  (SWP central, scénarios, modèle Excel)
+05-gepp-competences    30 : 8+8+9 quiz 5     (GEPP FR, cartographie, métiers critiques)
+06-org-tom             30 : 8+8+9 quiz 5     (org design, span of control, TOM, process SIPOC)
+07-transfo-change      30 : 8+8+9 quiz 5     (HR operating model, ADKAR, projet conseil)
+08-finance-livrables   30 : 8+8+9 quiz 5     (masse salariale/ROI, dimensionnement, slides, pas de fake benchmark)
+09-mission-examen      30 : projet 12 + correction 6 + quiz 12
+   quiz examen passing 80, ≥12 questions. Optional minutes:0 : 50 cas (condensés), 100 Q entretien.
+
+import { pack, lesson, quizLesson, q, h, t, note, code } from "../lib.mjs";
+pack 8 sections, theory 700-1400 chars, vouvoiement.
+ETP pédagogique : 1 personne 35h = 1 ETP ; 28h = 0,8. Turnover = départs / effectif moyen. Ne pas inventer un taux légal unique d'absentéisme.
+GEPP : évolution de la GPEC, Code du travail (négociation sur la gestion des emplois et des parcours). Ne pas inventer un seuil d'effectif si non vérifié — dire « selon effectif et obligations, vérifier le texte ».

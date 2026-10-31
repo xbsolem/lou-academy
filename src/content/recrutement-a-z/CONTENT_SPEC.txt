@@ -1,0 +1,36 @@
+FORMAT D'UN MODULE — src/content/recrutement-a-z/modules/NN-slug.mjs
+
+import { lesson, h, t, note, code, quizLesson, q } from "../lib.mjs";
+
+export default {
+  position: N, // 0-index
+  title: "...",
+  description: "Une phrase sur l'objectif du module.",
+  lessons: [ /* lesson() objects then quizLesson() */ ],
+};
+
+STRUCTURE OBLIGATOIRE DE CHAQUE LEÇON (dans cet ordre, titres en français) :
+1. Objectifs pédagogiques
+2. Ce qu'il faut comprendre (théorie, définitions, mécanismes)
+3. Méthode opérationnelle (ordre, outils, interlocuteurs, documents, contrôles)
+4. Exemple professionnel (PME / ETI / startup / industrie / services / cabinet / intérim — varier)
+5. Erreurs fréquentes du recruteur junior
+6. Situations particulières
+7. Mise en pratique (consigne concrète)
+8. Correction détaillée (pourquoi, pas seulement la bonne réponse)
+Leçons « ressources » (modèles, bibliothèque de cas) : adapter, mais jamais une fiche de 8 lignes.
+
+RÈGLES
+- Français professionnel, vouvoiement, pas de humour, pas de jargon vide.
+- Distinguer explicitement : obligation légale / recommandation d'autorité / politique interne / bonne pratique.
+- Sources juridiques : uniquement src/content/recrutement-a-z/legal-sources.json + textes cités. Date de vérif. 13/10/2026.
+- Ne pas inventer de jurisprudence, de délai légal, de statistique, de témoignage.
+- Ne pas affirmer qu'indiquer le salaire dans l'annonce est déjà obligatoire en droit français (directive UE en transposition — voir legal-sources.json).
+- Quiz : distracteurs crédibles, explanations argumentées, correct_answer = index 0-based dans options.
+- Options de quiz au format "A. ...", "B. ..." etc.
+- Blocs text : plusieurs paragraphes séparés par \n\n. Théorie d'une leçon = au moins 1200 caractères. Pas de lorem. Pas de « cette leçon va expliquer ».
+- Dialogues, grilles, e-mails, scripts : bloc code.
+- Points de vigilance : bloc note (callout).
+- Le LMS n'a PAS de devoir rendu : l'exercice + correction sont DANS la leçon.
+- Ne pas créer de leçon sql_exercise.
+- Ne pas modifier le cours SQL ni d'autres fichiers hors src/content/recrutement-a-z/.

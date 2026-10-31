@@ -122,7 +122,7 @@ export default async function RapportsPage() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 24 }}>
+      <div className="fluid-grid" style={{ marginBottom: 24 }}>
         <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)" }}>
           <h3 style={{ fontSize: "1rem", marginBottom: 12 }}>Entonnoir d&apos;engagement</h3>
           <p style={{ fontSize: "0.9rem", marginBottom: 8 }}>Inscrits sans démarrer : <strong>{enrolledOnly}</strong></p>

@@ -1,0 +1,12 @@
+{
+  "id": "dossier-06",
+  "name": "Antoine Vidal",
+  "brut": 5000,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Non-cadre au-dessus du PMSS. T1 4005, T2 995, CET s 7,00 €, ARRCO_T2 s 85,97 €, salarial 1037,18 €, NI 4105,28 €, NAP/MNS 3962,82 €. FNAL <50 : 4,01 €. Pas d'APEC. AT/MP hypo 75,00 €."
+}

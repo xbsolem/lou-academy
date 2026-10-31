@@ -1,0 +1,7 @@
+-- POINTER — le seed est découpé (éditeur SQL ~1 Mo).
+-- 1. Exécutez 008a_seed_chef_projet_marketing.sql
+-- 2. Exécutez 008b_seed_chef_projet_marketing.sql
+-- Slug: chef-projet-marketing-developpement
+-- 10 modules, 53 leçons, 10 quiz.
+-- Régénérer : node scripts/generate-marketing-seed.mjs
+-- Ne touche PAS sql-pour-debutants-2h, devenir-recruteur-a-z, devenir-gestionnaire-de-paie.

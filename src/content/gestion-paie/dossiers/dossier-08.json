@@ -1,0 +1,12 @@
+{
+  "id": "dossier-08",
+  "name": "Sofiane Benali",
+  "brut": 1458.46,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Temps partiel 80 % (28 h). Brut SMIC partiel pédagogique 12,02 × 121,336 ≈ 1458,46 € (engine.euro). Contrôle SMIC horaire 12,02 €, pas le mensuel 1823,03 €. Heures complémentaires : L. 3123-9, pas des HS. Moteur computeBulletin(1458.46) : salarial 303,93 €, patronal 599,23 €, NI 1196,08 €, NAP/MNS 1154,53 €. AT/MP 1,50 % HYPOTHÈSE. CCN IDCC à lire, aucun minimum inventé."
+}

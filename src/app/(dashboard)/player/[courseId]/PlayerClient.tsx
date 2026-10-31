@@ -229,9 +229,10 @@ export default function PlayerClient({
               return (
                 <div
                   key={lesson.id}
+                  className="player-lesson-item"
                   onClick={() => goToLesson(lesson)}
                   style={{
-                    display: "flex", alignItems: "center", gap: 8, padding: "8px 12px",
+                    alignItems: "center", padding: "8px 12px",
                     borderRadius: 8, cursor: "pointer", marginBottom: 2, fontSize: "0.85rem",
                     background: isActive ? "rgba(79,70,229,0.1)" : "transparent",
                     color: isActive ? "var(--primary)" : "var(--text)",
@@ -275,13 +276,13 @@ export default function PlayerClient({
             </div>
 
             {blocksLoading && (
-              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24, textAlign: "center", color: "var(--text-light)" }}>
+              <div className="player-card" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24, textAlign: "center", color: "var(--text-light)" }}>
                 Chargement de la leçon…
               </div>
             )}
 
             {!blocksLoading && displayBlocks.length > 0 && (
-              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
+              <div className="player-card" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
                 {displayBlocks.map((block) => (
                   <div key={block.id} style={{ marginBottom: 20 }}>
                     {block.block_type === "heading" && (
@@ -358,7 +359,7 @@ export default function PlayerClient({
             ))}
 
             {!blocksLoading && !isQuiz && !isSqlLesson && displayBlocks.length === 0 && (
-              <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
+              <div className="player-card" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24 }}>
                 <div style={{ textAlign: "center", padding: 40, color: "var(--text-light)" }}>
                   <i className="fas fa-file-alt" style={{ fontSize: "3rem", color: "var(--border)", marginBottom: 12, display: "block" }} />
                   <p>Aucun contenu pour cette leçon.</p>

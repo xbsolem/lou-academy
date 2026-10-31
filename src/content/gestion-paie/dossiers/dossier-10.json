@@ -1,0 +1,12 @@
+{
+  "id": "dossier-10",
+  "name": "Sarah Cohen",
+  "brut": 2500,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0.1,
+  "includeMutuelle": true,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Même brut 2500 € qu'Hugo, plus mutuelle HYPOTHÈSE 20/40 € et PAS HYPOTHÈSE 10 %. NI 2050,22 €, PAS 205,02 €, MNS 1978,99 € (mutuelle s hors MNS 2026, part patronale 40 € hors MNS jusqu'au 31/12/2026 BOSS), NAP 1753,97 € (1978,99 − 20 − 205,02). Dispense mutuelle : pièces, pas un mail. Confidentialité PAS."
+}

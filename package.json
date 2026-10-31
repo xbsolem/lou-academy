@@ -14,6 +14,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed:sql-debutants": "node scripts/generate-sql-debutants-seed.mjs",
+    "seed:recrutement": "node scripts/generate-recrutement-seed.mjs",
+    "seed:paie": "node scripts/generate-paie-seed.mjs",
+    "seed:marketing": "node scripts/generate-marketing-seed.mjs",
+    "seed:workforce": "node scripts/generate-workforce-seed.mjs",
     "copy:sql-wasm": "node scripts/copy-sql-wasm.mjs"
   },
   "dependencies": {

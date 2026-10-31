@@ -142,7 +142,7 @@ export default function EnrolleesTab({ courseId }: { courseId: string }) {
           <h3 style={{ marginBottom: 8, color: "var(--text-light)" }}>Aucun apprenant inscrit</h3>
         </div>
       ) : (
-        <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", overflow: "hidden", boxShadow: "var(--shadow)" }}>
+        <div className="table-responsive" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", boxShadow: "var(--shadow)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)" }}>

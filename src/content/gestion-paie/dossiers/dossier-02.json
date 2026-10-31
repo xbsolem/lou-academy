@@ -1,0 +1,12 @@
+{
+  "id": "dossier-02",
+  "name": "Nadia Khelifi",
+  "brut": 2100,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Employée administrative, CDI 35 h, 2100 €. Non-cadre. Classification RH, pas d'APEC. Référence : salarial 437,65 €, NI 1722,19 €, NAP/MNS 1662,35 €. Taux horaire 13,85 € si HS. AT/MP 1,50 % HYPOTHÈSE."
+}

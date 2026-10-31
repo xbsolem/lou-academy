@@ -1,0 +1,7 @@
+-- POINTER — le seed est découpé (éditeur SQL ~1 Mo).
+-- 1. Exécutez 007a_seed_devenir_gestionnaire_paie.sql
+-- 2. Exécutez 007b_seed_devenir_gestionnaire_paie.sql
+-- Slug: devenir-gestionnaire-de-paie
+-- 37 modules, 326 leçons, 43 quiz.
+-- Régénérer : node scripts/generate-paie-seed.mjs
+-- Ne touche PAS sql-pour-debutants-2h ni devenir-recruteur-a-z.

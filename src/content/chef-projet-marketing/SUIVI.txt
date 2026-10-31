@@ -1,0 +1,21 @@
+FORMATION : Chef de projet marketing et développement
+SLUG : chef-projet-marketing-developpement
+DURÉE REQUIRED : exactement 300 minutes
+CAS FIL ROUGE : Banque Horizon — offre 25-35 ans
+NE PAS TOUCHER : sql-pour-debutants-2h ; devenir-recruteur-a-z ; devenir-gestionnaire-de-paie
+
+00-metier.mjs          20 min  [RÉDIGÉ]
+01-marche.mjs          35 min  [RÉDIGÉ]
+02-cadrage.mjs         30 min  [RÉDIGÉ]
+03-business-case.mjs   40 min  [RÉDIGÉ]
+04-decision.mjs        25 min  [RÉDIGÉ]
+05-gouvernance.mjs     35 min  [RÉDIGÉ]
+06-risques.mjs         30 min  [RÉDIGÉ]
+07-deploiement.mjs     30 min  [RÉDIGÉ]
+08-performance.mjs     20 min  [RÉDIGÉ]
+09-projet-examen.mjs   35 min  [RÉDIGÉ]  + 2 leçons facultatives 0 min
+
+Pipeline : scripts/generate-marketing-seed.mjs → supabase/008a+008b
+Import : SUPABASE_SECRET_KEY=… node scripts/import-marketing.mjs
+Tests : npx vitest run src/content/chef-projet-marketing
+Attestation LOU ≠ RNCP

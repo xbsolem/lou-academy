@@ -1,0 +1,118 @@
+{
+  "period": "2026-01",
+  "period_label": "Période d'emploi janvier 2026 (rémunérations versées au titre de janvier 2026), métropole, régime général",
+  "verified_on": "2026-10-14",
+  "disclaimer": "Taux et plafonds ci-dessous sont ceux vérifiés sur des sources institutionnelles à la date indiquée. Un paramètre d'entreprise (AT/MP, versement mobilité, mutuelle, prévoyance, taux PAS, convention) n'est jamais un taux national unique. Distinguer obligation légale, paramètre annuel, hypothèse pédagogique, politique interne.",
+  "sources": [
+    {
+      "id": "URSSAF-PMSS-2026",
+      "label": "URSSAF — Plafonds de la Sécurité sociale, mis à jour le 01/01/2026",
+      "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html",
+      "note": "Arrêté du 22 décembre 2025. PMSS 4 005 €, PASS 48 060 €, jour 220 €, heure 30 €. Applicable aux cotisations dues au titre des périodes d'activité à compter du 01/01/2026."
+    },
+    {
+      "id": "URSSAF-SMIC-2026",
+      "label": "URSSAF — Montant du Smic 2026",
+      "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/montant-smic.html",
+      "note": "01/01/2026 au 31/05/2026 : 12,02 € / h, 1 823,03 € / mois base 35 h. Au 01/06/2026 : 12,31 € / h, 1 867,02 € / mois. Les exercices du moteur pédagogique utilisent la période janvier 2026 sauf mention contraire."
+    },
+    {
+      "id": "SP-SMIC-2026",
+      "label": "Service-Public — Revalorisation du Smic au 1er janvier 2026",
+      "url": "https://www.service-public.gouv.fr/particuliers/actualites/A17008",
+      "note": "Confirme 12,02 € et 1 823,03 €. Net indicatif 1 443,11 € : chiffre de communication, pas une formule de bulletin."
+    },
+    {
+      "id": "URSSAF-TAUX-PRIVE-2026",
+      "label": "URSSAF — Taux de cotisations secteur privé, mis à jour le 01/01/2026",
+      "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html",
+      "note": "Maladie patronale taux plein 13 %. Vieillesse patronale 2,11 % totalité + 8,55 % plafonnée. AF taux plein 5,25 %. CSA 0,30 %. Chômage 4,00 % dans la limite de 4 PASS (192 240 € en 2026). AGS 0,25 % (0,03 % ETT). FNAL 0,10 % plafonné si < 50 salariés, 0,50 % si ≥ 50. Dialogue social 0,016 %. En 2026, les taux réduits maladie/AF de droit commun fusionnent dans la RGDU (sauf exonérations spécifiques)."
+    },
+    {
+      "id": "URSSAF-RGDU-2026",
+      "label": "URSSAF — Réduction générale dégressive unique",
+      "url": "https://www.urssaf.fr/accueil/employeur/beneficier-exonerations/reduction-generale-cotisation.html",
+      "note": "2026 : fusion RGD + taux réduits AM/AF. Coefficient max 0,3981 (<50, FNAL 0,10 %) ou 0,4021 (≥50). Smic de référence : valeur au 01/01/2026. AT/MP intégré dans l'allègement dans la limite de 0,49 %. Le moteur pédagogique n'applique la RGDU que si le cas le demande explicitement."
+    },
+    {
+      "id": "MSA-BAREME-2026",
+      "label": "MSA — Barème des taux au 01/01/2026 (recoupement régime général : vieillesse, CSG/CRDS)",
+      "url": "https://www.msa.fr/lfp/documents/98900/1508602/Taux+des+cotisations+sur+salaires+2026",
+      "note": "Vieillesse salariale 6,90 % plafonnée + 0,40 % totalité. CSG 6,80 % déductible + 2,40 % non déductible, CRDS 0,50 %, assiette 98,25 % dans la limite de 4 PASS puis 100 % au-delà. Maladie salariale 0 % (5,50 % si non domicilié fiscalement en France). Chômage salarial 0 %."
+    },
+    {
+      "id": "AGIRC-ARRCO-2026",
+      "label": "Agirc-Arrco — Calcul des cotisations 2026",
+      "url": "https://www.agirc-arrco.fr/entreprises/mon-entreprise/calculer-et-declarer/le-calcul-des-cotisations-de-retraite-complementaire/",
+      "note": "T1 ≤ 4 005 € : 7,87 % (4,72 % p / 3,15 % s). T2 4 005–32 040 € : 21,59 % (12,95 % / 8,64 %). CEG T1 2,15 % (1,29 / 0,86). CEG T2 2,70 % (1,62 / 1,08). CET 0,35 % (0,21 / 0,14) sur T1+T2 seulement si salaire > T1."
+    },
+    {
+      "id": "BOSS-MNS",
+      "label": "BOSS — Montant net social",
+      "url": "https://boss.gouv.fr/portail/accueil/bulletin-de-paie/montant-net-social.html",
+      "note": "Revenu net après prélèvements sociaux obligatoires, à afficher sur le bulletin. Modèle provisoire de bulletin prolongé jusqu'au 31/12/2026. Évolution possible au 01/01/2027 (part patronale complémentaire santé) : projet, à revérifier. Jusqu'au 31/12/2026, ne pas intégrer d'office la mutuelle patronale dans le MNS."
+    },
+    {
+      "id": "BOSS-BULLETIN",
+      "label": "BOSS — Règles générales relatives au bulletin de paie",
+      "url": "https://boss.gouv.fr/portail/accueil/bulletin-de-paie/regles-generales-relatives-au-bu.html",
+      "note": "Mentions et modèle. Article R. 3243-1 du Code du travail."
+    }
+  ],
+  "pmss": 4005,
+  "pass": 48060,
+  "pmss_day": 220,
+  "pmss_hour": 30,
+  "smic_hour": 12.02,
+  "smic_month_151_67": 1823.03,
+  "hours_month_legal": 151.67,
+  "csg_abattement": 0.0175,
+  "csg_abattement_limit_pass": 4,
+  "employee": {
+    "maladie": 0,
+    "vieillesse_plafonnee": 0.069,
+    "vieillesse_deplafonnee": 0.004,
+    "chomage": 0,
+    "csg_deductible": 0.068,
+    "csg_non_deductible": 0.024,
+    "crds": 0.005,
+    "arrco_t1": 0.0315,
+    "arrco_t2": 0.0864,
+    "ceg_t1": 0.0086,
+    "ceg_t2": 0.0108,
+    "cet": 0.0014,
+    "apec": 0.00024
+  },
+  "employer": {
+    "maladie_plein": 0.13,
+    "csa": 0.003,
+    "vieillesse_plafonnee": 0.0855,
+    "vieillesse_deplafonnee": 0.0211,
+    "allocations_familiales_plein": 0.0525,
+    "chomage": 0.04,
+    "ags": 0.0025,
+    "fnal_lt50_plafonne": 0.001,
+    "fnal_gte50": 0.005,
+    "dialogue_social": 0.00016,
+    "arrco_t1": 0.0472,
+    "arrco_t2": 0.1295,
+    "ceg_t1": 0.0129,
+    "ceg_t2": 0.0162,
+    "cet": 0.0021,
+    "apec": 0.00036
+  },
+  "hypotheses_pedagogiques": {
+    "atmp": {
+      "rate": 0.015,
+      "label": "1,50 % — HYPOTHÈSE pédagogique de dossier, pas un taux national. Le taux AT/MP est notifié par la Carsat."
+    },
+    "mutuelle_salarie": {
+      "amount": 20,
+      "label": "20,00 € — HYPOTHÈSE de contrat collectif du dossier fictif."
+    },
+    "mutuelle_employeur": {
+      "amount": 40,
+      "label": "40,00 € — HYPOTHÈSE. La part patronale de complémentaire santé n'est pas intégrée au MNS jusqu'au 31/12/2026 selon le cadre BOSS en vigueur (évolution 2027 à vérifier)."
+    }
+  }
+}

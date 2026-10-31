@@ -104,9 +104,8 @@ export default function CourseCard({
           {course.description || "Aucune description"}
         </p>
         <div
+          className="card-meta-row"
           style={{
-            display: "flex",
-            gap: 16,
             fontSize: "0.8rem",
             color: "var(--text-lighter)",
           }}
@@ -129,10 +128,8 @@ export default function CourseCard({
         </div>
       </div>
       <div
+        className="card-footer-row"
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
           padding: "12px 20px",
           borderTop: "1px solid var(--border)",
         }}

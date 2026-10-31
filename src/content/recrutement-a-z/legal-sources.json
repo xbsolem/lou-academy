@@ -1,0 +1,97 @@
+{
+  "verified_on": "2026-10-13",
+  "disclaimer": "Les références ci-dessous ont été vérifiées sur des sources institutionnelles à la date indiquée. Un recruteur junior doit relire le texte en vigueur sur Légifrance, Service-Public, le Code du travail numérique, la CNIL ou l'Urssaf avant d'appliquer une règle à un cas réel. Distinguer toujours : obligation légale, recommandation d'autorité, politique interne, bonne pratique professionnelle.",
+  "sources": [
+    {
+      "id": "L1132-1",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 1132-1 — principe de non-discrimination (y compris à l'embauche)",
+      "url": "https://code.travail.gouv.fr/code-du-travail/l1132-1",
+      "note": "Interdit d'écarter une personne d'un recrutement en raison des critères protégés (origine, sexe, mœurs, orientation sexuelle, identité de genre, âge, situation de famille ou grossesse, caractéristiques génétiques, vulnérabilité économique, appartenance vraie ou supposée à une ethnie, une nation ou une prétendue race, opinions politiques, activités syndicales ou mutualistes, mandat électif, convictions religieuses, apparence physique, nom de famille, lieu de résidence, domiciliation bancaire, état de santé, perte d'autonomie, handicap, capacité à s'exprimer dans une langue autre que le français, qualité de lanceur d'alerte, facilitateur ou personne en lien avec un lanceur d'alerte)."
+    },
+    {
+      "id": "L1134-5",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 1134-5 — prescription de l'action en réparation du préjudice résultant d'une discrimination",
+      "url": "https://www.legifrance.gouv.fr/",
+      "note": "Fondement cité par la CNIL pour une conservation probatoire de 5 ans à compter de la date à laquelle le poste a été pourvu (candidats non retenus). Obligation de conservation à des fins de preuve, pas une autorisation de laisser les CV en base active indéfiniment."
+    },
+    {
+      "id": "L1221-6",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 1221-6 — informations demandées au candidat",
+      "url": "https://code.travail.gouv.fr/code-du-travail/l1221-6",
+      "note": "Les informations demandées, sous quelque forme que ce soit, ne peuvent avoir comme finalité que d'apprécier la capacité à occuper l'emploi ou les aptitudes professionnelles. Lien direct et nécessaire avec l'emploi. Le candidat répond de bonne foi. Source Code du travail numérique, mise à jour indiquée 01/05/2008 pour cet article."
+    },
+    {
+      "id": "L1221-8",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 1221-8 — information préalable sur les méthodes de recrutement",
+      "url": "https://code.travail.gouv.fr/code-du-travail/l1221-8",
+      "note": "Le candidat est expressément informé, préalablement à leur mise en œuvre, des méthodes et techniques d'aide au recrutement utilisées à son égard. Les résultats sont confidentiels. Les méthodes doivent être pertinentes au regard de la finalité poursuivie."
+    },
+    {
+      "id": "L1221-9",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 1221-9 — méthodes d'évaluation pertinentes",
+      "url": "https://www.legifrance.gouv.fr/",
+      "note": "Les méthodes et techniques d'aide au recrutement ou d'évaluation des salariés et des candidats doivent être pertinentes au regard de la finalité poursuivie."
+    },
+    {
+      "id": "L5331-2",
+      "type": "obligation_legale",
+      "label": "Code du travail — interdiction de mentionner le sexe / situation de famille dans une offre (voir aussi L. 1142-1, R. 1142-1)",
+      "url": "https://entreprendre.service-public.gouv.fr/vosdroits/F39133",
+      "note": "Fiche Service-Public Entreprendre « Préparer et diffuser une offre d'emploi », vérifiée le 02/10/2025. Exceptions limitées (artiste, mannequin/modèle)."
+    },
+    {
+      "id": "L5331-3",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 5331-3 — allégations fausses ou trompeuses dans les offres",
+      "url": "https://code.travail.gouv.fr/code-du-travail/l5331-3",
+      "note": "Interdit les allégations fausses ou susceptibles d'induire en erreur sur l'existence, la nature, la description de l'emploi, la rémunération et avantages, le lieu de travail."
+    },
+    {
+      "id": "L5331-4",
+      "type": "obligation_legale",
+      "label": "Code du travail, article L. 5331-4 — offre rédigée en français",
+      "url": "https://code.travail.gouv.fr/code-du-travail/l5331-4",
+      "note": "Offre en français si le travail s'effectue en France (ou si l'auteur/employeur est français pour un travail à l'étranger). Terme étranger sans équivalent : description française suffisamment détaillée."
+    },
+    {
+      "id": "SP-F39588",
+      "type": "jurisprudence_expliquee_par_service_public",
+      "label": "Service-Public Entreprendre F39588 — offre de contrat vs promesse unilatérale",
+      "url": "https://entreprendre.service-public.gouv.fr/vosdroits/F39588",
+      "note": "Vérifié le 12/03/2026. Ces notions ne sont pas définies par la loi mais encadrées par la jurisprudence (not. Cass. soc. 21 septembre 2017, n° 16-20.103 et 16-20.104). L'offre peut être retirée avant acceptation (dans le délai laissé ou un délai raisonnable) ; la promesse unilatérale vaut contrat, le retrait s'analyse en licenciement sans cause réelle et sérieuse. Une promesse d'embauche n'est pas obligatoire."
+    },
+    {
+      "id": "SP-F23107",
+      "type": "obligation_legale",
+      "label": "Service-Public Entreprendre F23107 + Urssaf — DPAE",
+      "url": "https://entreprendre.service-public.gouv.fr/vosdroits/F23107",
+      "note": "DPAE obligatoire avant la prise de fonction ou le début de la période d'essai, au plus tôt dans les 8 jours précédant l'embauche. Obligation de l'employeur, pas du recruteur junior isolé ; le recruteur coordonne avec les RH."
+    },
+    {
+      "id": "CNIL-guide",
+      "type": "recommandation_autorite",
+      "label": "CNIL — Guide du recrutement (19 fiches) et fiche TPE/PME",
+      "url": "https://www.cnil.fr/fr/le-guide-du-recrutement",
+      "note": "Guide CNIL 30/01/2023. Fiche TPE/PME : https://www.cnil.fr/fr/recrutement-et-donnees-personnelles-dans-les-tpepme-cinq-questions-incontournables-se-poser. Conservations : recommandation de 2 ans en vivier à compter du dernier contact (candidat informé, possibilité d'opposition). Ne pas présenter les 2 ans comme une durée unique obligatoire pour tous les traitements."
+    },
+    {
+      "id": "CNIL-referentiel-2026",
+      "type": "obligation_et_recommandation",
+      "label": "CNIL — Référentiel durées de conservation RH (publié 2 avril 2026, mis à jour 20 mai 2026)",
+      "url": "https://www.cnil.fr/sites/default/files/2026-04/referentiel_durees_de_conservation_gestion_des_ressources_humaines.pdf",
+      "note": "Candidat retenu : conservation en base active le temps de la procédure jusqu'à la signature, puis réemploi pour la gestion du personnel. Candidat non retenu : archivage intermédiaire 5 ans à compter de la date à laquelle le poste a été pourvu, à des fins probatoires (L. 1134-5) — obligation. Vivier / CVthèque : jusqu'à 2 ans à compter du dernier contact, sauf opposition — recommandation CNIL (Guide recrutement), pas une durée unique imposée par le RGPD lui-même."
+    },
+    {
+      "id": "UE-transparence-salariale",
+      "type": "droit_europeen_en_transposition",
+      "label": "Directive (UE) 2023/970 — transparence des rémunérations",
+      "url": "https://entreprendre.service-public.gouv.fr/vosdroits/F39133",
+      "note": "Service-Public (02/10/2025) : indiquer le salaire dans l'offre n'est pas (encore) obligatoire en droit français au jour de la fiche, mais une directive européenne impose une information sur la rémunération ou une fourchette dans l'offre ; transposition en cours. Distinguer : pas encore une obligation interne française consolidée à cette date / bonne pratique / future obligation. Ne pas affirmer que c'est déjà obligatoire en France sans vérifier le texte de transposition en vigueur le jour J."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "company": "Atelier Lumière Paie (fictif)",
+  "period": "2026-01",
+  "headcount": 20,
+  "atmpRate": 0.015,
+  "atmp_label": "HYPOTHÈSE pédagogique 1,50 %, pas un taux Carsat réel",
+  "rgdu": false,
+  "ccn": "IDCC à lire — aucun minimum inventé",
+  "employees": [
+    {"id":"ALP-01","name":"Léa Morel","profile":"non-cadre SMIC 35h","brut":1823.03,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]},
+    {"id":"ALP-02","name":"Nadia Khelifi","profile":"non-cadre 2100","brut":2100,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]},
+    {"id":"ALP-03","name":"Hugo Bertin","profile":"non-cadre 2500 référence","brut":2500,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]},
+    {"id":"ALP-04","name":"Paul Mercier","profile":"non-cadre 3100 PAS 8% hypo","brut":3100,"cadre":false,"pasRate":0.08,"includeMutuelle":false,"events":["pas"]},
+    {"id":"ALP-05","name":"Camille Roux","profile":"cadre forfait jours 3500","brut":3500,"cadre":true,"pasRate":0,"includeMutuelle":false,"events":["forfait-jours"]},
+    {"id":"ALP-06","name":"Antoine Vidal","profile":"non-cadre 5000 T2","brut":5000,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["t2"]},
+    {"id":"ALP-07","name":"Inès Palacio","profile":"entrée 13/01 contrat 2100","brut":1287.1,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["entree-13"]},
+    {"id":"ALP-08","name":"Sofiane Benali","profile":"temps partiel 80% SMIC","brut":1458.46,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["temps-partiel"]},
+    {"id":"ALP-09","name":"Thomas Leroy","profile":"2500 + prime 200","brut":2700,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["prime"]},
+    {"id":"ALP-10","name":"Sarah Cohen","profile":"2500 mutuelle+PAS 10%","brut":2500,"cadre":false,"pasRate":0.1,"includeMutuelle":true,"events":["mutuelle","pas"]},
+    {"id":"ALP-11","name":"Marc Dupuis","profile":"non-cadre HS 4x25% sur 2100","brut":2169.25,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["hs"]},
+    {"id":"ALP-12","name":"Claire Petit","profile":"3100 moins 3 j calendaires","brut":2800,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["absence"]},
+    {"id":"ALP-13","name":"Yanis Haddad","profile":"arrêt maladie — brut 2500 méthode IJ","brut":2500,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["maladie"]},
+    {"id":"ALP-14","name":"Julie Moreau","profile":"sortie 15/01 brut 2500","brut":1209.68,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["sortie-15"]},
+    {"id":"ALP-15","name":"Karim El Amrani","profile":"2500 + AEN repas hypo 50","brut":2550,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["aen"]},
+    {"id":"ALP-16","name":"Emma Blanchard","profile":"rappel 200 sur 2500","brut":2700,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":["regul"]},
+    {"id":"ALP-17","name":"Noah Garcia","profile":"non-cadre 2100","brut":2100,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]},
+    {"id":"ALP-18","name":"Chloé Martin","profile":"cadre 3500 effectif 20","brut":3500,"cadre":true,"pasRate":0,"includeMutuelle":false,"events":["cadre"]},
+    {"id":"ALP-19","name":"Lucas Bernard","profile":"SMIC","brut":1823.03,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]},
+    {"id":"ALP-20","name":"Amina Traoré","profile":"2500 référence 2","brut":2500,"cadre":false,"pasRate":0,"includeMutuelle":false,"events":[]}
+  ]
+}

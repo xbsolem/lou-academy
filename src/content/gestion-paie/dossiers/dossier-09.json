@@ -1,0 +1,12 @@
+{
+  "id": "dossier-09",
+  "name": "Thomas Leroy",
+  "brut": 2700,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Base 2500 € + prime exceptionnelle soumise 200 € (CSS L. 242-1, pas d'exonération inventée). DPAE entrée 20/01 à vérifier selon scénario atelier. Moteur 2700 € : salarial 562,69 €, patronal 1109,32 €, NI 2214,24 €, NAP/MNS 2137,31 €. Interdit : 1978,99 + 200. AT/MP hypo 40,50 €."
+}

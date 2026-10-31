@@ -1,0 +1,51 @@
+FORMAT D'UN MODULE — src/content/gestion-paie/modules/NN-slug.mjs
+
+import { lesson, h, t, note, code, quizLesson, q, pack } from "../lib.mjs";
+
+export default {
+  position: N, // 0-index, unique, égal au préfixe NN du fichier
+  title: "...",
+  description: "Une phrase sur l'objectif du module.",
+  lessons: [ /* lesson() ou pack() puis quizLesson() en dernier */ ],
+};
+
+STRUCTURE OBLIGATOIRE DE CHAQUE LEÇON (dans cet ordre, titres en français) :
+1. Objectifs pédagogiques
+2. Ce qu'il faut comprendre (théorie, définitions, mécanismes, conséquences sur la paie)
+3. Méthode opérationnelle (ordre, documents, interlocuteurs, contrôles, logiciel générique)
+4. Exemple professionnel (PME / ETI / cabinet / CSP / industrie / services — varier)
+5. Erreurs fréquentes du gestionnaire de paie junior
+6. Situations particulières
+7. Mise en pratique (consigne concrète, chiffrée dès que le sujet l'exige)
+8. Correction détaillée (étapes, résultat, pourquoi, pas seulement la bonne réponse)
+Leçons « ressources », « cas », « simulateur », « examen » : adapter, mais jamais une fiche de 8 lignes.
+
+RÈGLES PÉDAGOGIQUES
+- Français professionnel, vouvoiement, pas de humour, pas de jargon vide.
+- Enseigner à FAIRE : identifier, assietter, chercher le taux, plafonner, calculer, contrôler, expliquer, corriger.
+- Distinguer explicitement : obligation légale / paramètre annuel (taux, plafond) / disposition conventionnelle / paramètre d'entreprise / hypothèse pédagogique / politique interne / bonne pratique.
+- Chaque calcul réglementaire : période (janvier 2026 métropole régime général sauf mention contraire), règle, source, formule, hypothèses, étapes, résultat arrondi au centime.
+- Taux et plafonds : UNIQUEMENT src/content/gestion-paie/rates-2026.json et legal-sources.json. Ne jamais inventer un taux URSSAF, un PMSS, un SMIC, un taux Agirc-Arrco, un taux AT/MP national, une clause de CCN.
+- AT/MP, mutuelle, prévoyance, versement mobilité, taux PAS : toujours étiquetés HYPOTHÈSE de dossier fictif, jamais présentés comme un taux national.
+- RGDU 2026 : ne l'appliquer que si le cas le demande. Sinon, taux pleins maladie 13 % et AF 5,25 % (URSSAF privé 01/01/2026) et le dire.
+- Ne pas inventer de jurisprudence, de délai, de statistique, de témoignage, de capture d'écran d'un logiciel propriétaire.
+- Ne jamais présenter la formation comme un titre RNCP, un diplôme d'État, ni une certification Sage / Silae / Cegid / ADP / SAP / Workday / PayFit / Nibelis.
+- 36 000 € brut / statut cadre : objectif de marché, jamais une garantie d'obtention.
+- Quiz : distracteurs crédibles, explanations argumentées, correct_answer = index 0-based dans options, options "A. ...", "B. ...".
+- Quiz de module : passing_score 70, au moins 8 questions. Quiz d'examen final : passing_score 80, compétences critiques.
+- Blocs text : paragraphes séparés par \n\n. Théorie d'une leçon = au moins 1200 caractères. Pas de lorem. Pas de « cette leçon va expliquer ».
+- Tableaux, bulletins, checklists, DSN, journaux, e-mails, dialogues : bloc code.
+- Points de vigilance et limites d'autonomie junior : bloc note (callout).
+- Le LMS n'a PAS de devoir rendu : exercice + correction DANS la leçon.
+- Ne pas créer de leçon sql_exercise. Ne pas ajouter de block_type inconnu.
+- Ne modifier AUCUN fichier hors src/content/gestion-paie/ (sauf si la mission le demande expressément pour scripts/generate-paie-seed.mjs, scripts/import-paie.mjs, package.json).
+- Ne pas toucher sql-pour-debutants-2h ni devenir-recruteur-a-z.
+
+LOGICIELS
+- Présenter Sage Paie, Silae, Cegid, ADP, SAP SuccessFactors (paie associée), Workday, PayFit, Nibelis au niveau fonctionnel : positionnement, données, cycle, contrôles, DSN, limites.
+- Distinguer moteur de paie, SIRH, solution intégrée.
+- Le simulateur pédagogique LOU n'est PAS un clone commercial. Le dire.
+
+SIMULATEUR / CAS
+- Résultats déterministes. Date d'application + hypothèses sur chaque scénario.
+- Si un paramètre n'est pas dans rates-2026.json, l'étiqueter et ne pas le présenter comme conforme à un barème national.

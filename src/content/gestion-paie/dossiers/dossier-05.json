@@ -1,0 +1,12 @@
+{
+  "id": "dossier-05",
+  "name": "Camille Roux",
+  "brut": 3500,
+  "cadre": true,
+  "headcount": 80,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Cadre, forfait jours (pas de HS L. 3121-36 au réflexe 25 %). Effectif 80 → FNAL 0,50 % = 17,50 €. APEC s 0,84 € p 1,26 €. Salarial 730,25 €, NAP/MNS 2769,75 €. CCN : IDCC à lire, aucun minimum inventé. AT/MP 1,50 % HYPOTHÈSE."
+}

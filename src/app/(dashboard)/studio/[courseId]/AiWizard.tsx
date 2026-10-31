@@ -196,7 +196,7 @@ export default function AiWizard({
           <input type="text" value={audience} onChange={(e) => setAudience(e.target.value)} placeholder="Ex: Debutants en analyse de donnees" style={inputStyle} />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+        <div className="form-grid-2" style={{ marginBottom: 20 }}>
           <div>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: 6 }}>Niveau</label>
             <select value={level} onChange={(e) => setLevel(e.target.value)} style={inputStyle}>

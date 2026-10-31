@@ -1,0 +1,10 @@
+{
+  "slug": "chef-projet-marketing-developpement",
+  "title": "Chef de projet marketing et développement",
+  "description": "De l'analyse d'opportunité au déploiement opérationnel d'un projet marketing et commercial.\n\nParcours de 5 heures (300 minutes) pour débutants et profils intermédiaires : identifier une opportunité, cadrer un projet, construire un business case, préparer un comité, piloter, déployer et mesurer. Cas fil rouge : Banque Horizon, offre jeunes actifs 25-35 ans. Exemples complémentaires : assurance, services, distribution, B2B et B2C.\n\nCe parcours enseigne des méthodes applicables. Il ne remplace pas l'expérience nécessaire au pilotage autonome de projets complexes. L'attestation LOU Academy certifie la réussite dans cette plateforme : ce n'est pas un diplôme d'État ni une certification professionnelle enregistrée au RNCP.\n\nPublic : reconversion, juniors marketing/commercial, chefs de projet en prise de poste. Durée : 5 heures. Niveau : débutant à intermédiaire. Catégorie : Marketing et développement.",
+  "level": "debutant",
+  "category": "Marketing et développement",
+  "icon": "fa-diagram-project",
+  "gradient": "linear-gradient(135deg, #4f46e5, #db2777)",
+  "estimated_duration_minutes": 300
+}

@@ -1,0 +1,76 @@
+FORMATION : Devenir gestionnaire de paie
+SLUG LMS : devenir-gestionnaire-de-paie
+PÉRIODE RÉGLEMENTAIRE DE RÉFÉRENCE : janvier 2026, métropole, régime général
+SOURCES TAUX : rates-2026.json (URSSAF, arrêté 22/12/2025 PMSS, Agirc-Arrco, MSA barème, BOSS MNS, Service-Public SMIC)
+NE PAS TOUCHER : sql-pour-debutants-2h ; devenir-recruteur-a-z
+
+PARAMÈTRES VERROUILLÉS (vérifiés 14/10/2026)
+- PMSS 4 005 € ; PASS 48 060 € ; jour 220 € ; heure 30 €
+- SMIC 12,02 €/h et 1 823,03 €/mois du 01/01/2026 au 31/05/2026 ; 12,31 €/h au 01/06/2026
+- Maladie salarial 0 % (5,50 % si non domicilié fiscalement en France)
+- Maladie patronal taux plein 13 % ; AF taux plein 5,25 % (RGDU 2026 remplace les taux réduits de droit commun)
+- Vieillesse salarial 6,90 % plaf. + 0,40 % totalité ; patronal 8,55 % plaf. + 2,11 % totalité
+- CSG 6,80 % déd. + 2,40 % non déd. + CRDS 0,50 % sur 98,25 % jusqu'à 4 PASS
+- Chômage patronal 4,00 % (4 PASS) ; AGS 0,25 % ; FNAL 0,10 % (<50 plaf.) / 0,50 % (≥50)
+- Dialogue social 0,016 %
+- Agirc-Arrco T1 7,87 % (4,72/3,15) ; T2 21,59 % (12,95/8,64) ; CEG T1 2,15 % ; CEG T2 2,70 % ; CET 0,35 % si > PSS
+- AT/MP et mutuelle : HYPOTHÈSES de dossier uniquement
+- MNS : affiché jusqu'au 31/12/2026 selon cadre BOSS ; évolution 2027 (mutuelle patronale) = projet à revérifier
+
+MODULES PRÉVUS (position = préfixe fichier)
+00-metier.mjs                          [RÉDIGÉ] 8 leçons dont quiz métier
+01-droit-travail.mjs                   [RÉDIGÉ]
+02-droit-ss.mjs                        [RÉDIGÉ]
+03-bulletin.mjs                        [RÉDIGÉ]
+04-salaire-brut.mjs                    [RÉDIGÉ]
+05-cotisations.mjs                     [RÉDIGÉ]
+06-plafonds-tranches.mjs               [RÉDIGÉ]
+07-brut-net.mjs                        [RÉDIGÉ]
+08-temps-travail-hs.mjs                [RÉDIGÉ]
+09-conges-payes.mjs                    [RÉDIGÉ]
+10-absences.mjs                        [RÉDIGÉ]
+11-maladie-ijss.mjs                    [RÉDIGÉ]
+12-primes-avantages.mjs                [RÉDIGÉ]
+13-mutuelle-prevoyance-retraite.mjs    [RÉDIGÉ]
+14-conventions-collectives.mjs         [RÉDIGÉ]
+15-entree-salarie.mjs                  [RÉDIGÉ]
+16-sortie-stc.mjs                      [RÉDIGÉ]
+17-pas-fiscalite.mjs                   [RÉDIGÉ]
+18-dsn.mjs                             [RÉDIGÉ]
+19-comptabilite.mjs                    [RÉDIGÉ]
+20-logiciels-sirh.mjs                  [RÉDIGÉ]
+21-excel-paie.mjs                      [RÉDIGÉ]
+22-parametrage.mjs                     [RÉDIGÉ]
+23-controle-cloture.mjs                [RÉDIGÉ]
+24-cycle-mensuel.mjs                   [RÉDIGÉ]
+25-administration-personnel.mjs        [RÉDIGÉ]
+26-communication.mjs                   [RÉDIGÉ]
+27-cas-complexes.mjs                   [RÉDIGÉ]
+28-veille-sociale.mjs                  [RÉDIGÉ]
+29-emploi-entretiens.mjs               [RÉDIGÉ]
+30-cas-debutant.mjs                    [RÉDIGÉ]  cas 1-40 (8 leçons + quiz)
+31-cas-intermediaire.mjs               [RÉDIGÉ]  cas 41-80 (8 leçons + quiz)
+32-cas-avance.mjs                      [RÉDIGÉ]  cas 81-120 (8 leçons + quiz)
+33-cas-complexes-atelier.mjs           [RÉDIGÉ]  cas 121-150 (6 leçons + quiz)
+34-ressources.mjs                      [RÉDIGÉ]  9 leçons + quiz
+35-simulateur.mjs                      [RÉDIGÉ]  8 leçons + quiz + dossiers/dossier-01.json … dossier-10.json
+36-examen-final.mjs                    [RÉDIGÉ]  10 leçons contenu + 7 quiz (80 questions, seuil 80 %)
+
+PIPELINE
+- Moteur : engine.mjs + rates-2026.json
+- Tests : engine.test.ts + course.test.ts
+- Seed SQL : scripts/generate-paie-seed.mjs → supabase/007a + 007b (ne pas écraser 006 recrutement)
+- Import Data API : scripts/import-paie.mjs (SUPABASE_SECRET_KEY, jamais écrite dans le dépôt)
+
+FONCTIONNALITÉS LMS RÉUTILISÉES
+- courses / modules / lessons / content_blocks / quizzes / quiz_questions
+- lesson_type lesson | quiz (pas sql_exercise)
+- block_type heading | text | callout | code
+- progression, certificats = attestation LOU Academy
+- Pas de nouveau schéma. Simulateur = dossiers JSON + leçons + moteur déterministe.
+
+REPRISE
+1. Lire SUIVI.txt + rates-2026.json + CONTENT_SPEC.txt
+2. Ne jamais remplacer un module manquant par un résumé
+3. Régénérer le seed après chaque lot : node scripts/generate-paie-seed.mjs
+4. Tests : npx vitest run src/content/gestion-paie

@@ -1,0 +1,12 @@
+{
+  "id": "dossier-03",
+  "name": "Hugo Bertin",
+  "brut": 2500,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Technicien, CDI 35 h, 2500 €. Bulletin commenté de référence. CSG base 2456,25 €, VIE_PLAF s 172,50 €, ARRCO_T1 s 78,75 €, salarial 521,01 €, patronal 1027,15 €, NI 2050,22 €, NAP/MNS 1978,99 €. AT/MP hypo 37,50 €."
+}

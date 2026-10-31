@@ -1,0 +1,7 @@
+-- POINTER — le seed est découpé (éditeur SQL ~1 Mo).
+-- 1. Exécutez 009a_seed_consultant_workforce.sql
+-- 2. Exécutez 009b_seed_consultant_workforce.sql
+-- Slug: consultant-junior-workforce-organization
+-- 10 modules, 42 leçons, 10 quiz.
+-- Régénérer : node scripts/generate-workforce-seed.mjs
+-- Ne touche PAS sql-pour-debutants-2h, devenir-recruteur-a-z, devenir-gestionnaire-de-paie, chef-projet-marketing-developpement.

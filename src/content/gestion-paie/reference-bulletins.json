@@ -1,0 +1,63 @@
+{
+  "period": "2026-01",
+  "hypotheses": "AT/MP 1,50 % pédagogique. Pas de mutuelle. RGDU non appliquée (taux pleins maladie 13 % / AF 5,25 %). Métropole, régime général.",
+  "bulletins": {
+    "smic": {
+      "brut": 1823.03,
+      "cadre": false,
+      "headcount": 20,
+      "employeeTotal": 379.94,
+      "employerTotal": 749.02,
+      "netImposable": 1495.04,
+      "netAvantImpot": 1443.09,
+      "netAPayer": 1443.09,
+      "montantNetSocial": 1443.09,
+      "note": "Le net indicatif Service-Public (1 443,11 €) est un chiffre de communication, pas ce bulletin pédagogique (écart de 0,02 € possible selon arrondis / périmètre)."
+    },
+    "brut_2100": {
+      "brut": 2100,
+      "employeeTotal": 437.65,
+      "netImposable": 1722.19,
+      "netAPayer": 1662.35,
+      "montantNetSocial": 1662.35
+    },
+    "brut_2500": {
+      "brut": 2500,
+      "csgBase": 2456.25,
+      "VIE_PLAF_s": 172.5,
+      "ARRCO_T1_s": 78.75,
+      "employeeTotal": 521.01,
+      "employerTotal": 1027.15,
+      "netImposable": 2050.22,
+      "netAPayer": 1978.99,
+      "montantNetSocial": 1978.99
+    },
+    "brut_3100_pas_8pct": {
+      "brut": 3100,
+      "pasRate": 0.08,
+      "netImposable": 2542.28,
+      "pas": 203.38,
+      "netAvantImpot": 2453.95,
+      "netAPayer": 2250.57,
+      "montantNetSocial": 2453.95
+    },
+    "cadre_3500_effectif_80": {
+      "brut": 3500,
+      "cadre": true,
+      "headcount": 80,
+      "FNAL_p": 17.5,
+      "APEC_s": 0.84,
+      "employeeTotal": 730.25,
+      "netAPayer": 2769.75
+    },
+    "brut_5000_t2": {
+      "brut": 5000,
+      "t1": 4005,
+      "t2": 995,
+      "CET_s": 7.0,
+      "employeeTotal": 1037.18,
+      "netImposable": 4105.28,
+      "netAPayer": 3962.82
+    }
+  }
+}

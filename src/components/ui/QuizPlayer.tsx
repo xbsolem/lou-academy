@@ -300,7 +300,7 @@ export default function QuizPlayer({
         </div>
       </div>
 
-      <div style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 16 }}>
+      <div className="player-card" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 24, boxShadow: "var(--shadow)", marginBottom: 16 }}>
         <p style={{ fontWeight: 600, marginBottom: 16, fontSize: "0.95rem" }}>
           <span style={{ color: "var(--primary)", marginRight: 8 }}>Q{currentIndex + 1}.</span>
           {q.question}
@@ -311,9 +311,10 @@ export default function QuizPlayer({
             return (
               <div
                 key={oi}
+                className="quiz-option"
                 onClick={() => toggleAnswer(q.id, oi, q.question_type)}
                 style={{
-                  display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
+                  display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 16px",
                   borderRadius: 8, border: `2px solid ${selected ? "var(--primary)" : "var(--border)"}`,
                   background: selected ? "rgba(79,70,229,0.05)" : "transparent",
                   cursor: "pointer", transition: "all 0.15s",

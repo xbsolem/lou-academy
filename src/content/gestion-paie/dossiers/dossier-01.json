@@ -1,0 +1,12 @@
+{
+  "id": "dossier-01",
+  "name": "Léa Morel",
+  "brut": 1823.03,
+  "cadre": false,
+  "headcount": 20,
+  "pasRate": 0,
+  "includeMutuelle": false,
+  "atmpRate": 0.015,
+  "period": "2026-01",
+  "notes": "Ouvrière CDI 35 h, SMIC janvier 2026. Non-cadre. CCN à lire (IDCC du dossier atelier, aucun minimum inventé). Ancienneté 2 ans. Pas de HS validées. AT/MP 1,50 % = HYPOTHÈSE. Référence moteur : salarial 379,94 €, patronal 749,02 €, NI 1495,04 €, NAP et MNS 1443,09 €. Ne pas caler 1443,11 €."
+}

@@ -91,7 +91,7 @@ export default async function EspacePage() {
         <LearningModePicker />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 28 }}>
+      <div className="fluid-grid" style={{ marginBottom: 28 }}>
         <EspaceForm
           userId={user.id}
           targetRole={targetRole}

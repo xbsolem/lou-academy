@@ -1,0 +1,6 @@
+-- POINTER — le seed est découpé (éditeur SQL ~1 Mo).
+-- 1. Exécutez 006a_seed_devenir_recruteur.sql
+-- 2. Exécutez 006b_seed_devenir_recruteur.sql
+-- Slug: devenir-recruteur-a-z
+-- 24 modules, 201 leçons, 24 quiz.
+-- Régénérer : node scripts/generate-recrutement-seed.mjs
