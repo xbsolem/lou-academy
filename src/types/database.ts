@@ -265,6 +265,31 @@ export interface UserChallengeProgress {
   updated_at: string;
 }
 
+export interface LessonNote {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  course_id: string;
+  title: string;
+  body_html: string;
+  body_text: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RevisionSheetRow {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  course_id: string;
+  title: string;
+  sections: Record<string, unknown>;
+  source_hash: string | null;
+  generated_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CourseSource {
   id: string;
   course_id: string;

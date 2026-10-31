@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileTabBar from "./MobileTabBar";
+import RouteProgress from "@/components/ui/RouteProgress";
 import LearningModeProvider from "@/components/learning/LearningModeProvider";
 import LearningModeGate from "@/components/learning/LearningModeGate";
 import type { Profile } from "@/types/database";
@@ -34,6 +35,7 @@ export default function DashboardShell({
 
   return (
     <LearningModeProvider userId={profile.id} initialMode={initialLearningMode}>
+      <RouteProgress />
       <div className={`dashboard-layout${isPlayer ? " is-player" : ""}`}>
         <Sidebar
           profile={profile}

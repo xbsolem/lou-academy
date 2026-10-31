@@ -50,6 +50,9 @@ export default function LearnerDashboard({
         <Link href="/espace" style={secondaryBtn}>
           <i className="fas fa-user-circle" /> Mon espace
         </Link>
+        <Link href="/mes-revisions" style={secondaryBtn}>
+          <i className="fas fa-book" /> Mes révisions
+        </Link>
         <Link href="/suggestions" style={secondaryBtn}>
           <i className="fas fa-lightbulb" /> Suggestions
         </Link>

@@ -61,6 +61,7 @@ export default async function PlayerPage({
 
   const journey = await loadCourseJourney(courseId);
   let courseSkillCount = 0;
+  let lastLessonId: string | null = null;
   if (user && !isPreview) {
     const { data: skillRows, error: skillError } = await supabase
       .from("user_skills")
@@ -72,6 +73,13 @@ export default async function PlayerPage({
         return (def as { course_id?: string } | null)?.course_id === courseId;
       }).length;
     }
+    const { data: enroll } = await supabase
+      .from("enrollments")
+      .select("last_lesson_id")
+      .eq("user_id", user.id)
+      .eq("course_id", courseId)
+      .maybeSingle();
+    lastLessonId = enroll?.last_lesson_id || null;
   }
 
   return (
@@ -83,6 +91,7 @@ export default async function PlayerPage({
       missions={journey.missions}
       skills={journey.skills}
       initialSkillCount={courseSkillCount}
+      initialLessonId={lastLessonId}
     />
   );
 }

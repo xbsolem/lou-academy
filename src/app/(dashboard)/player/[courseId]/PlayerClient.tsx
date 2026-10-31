@@ -13,6 +13,10 @@ import { xpFromCompletedLessons } from "@/lib/learning-mode";
 import { recordPracticeSuccess } from "@/lib/octalysis/award";
 import MissionCard from "@/components/octalysis/MissionCard";
 import ProgressLayers from "@/components/octalysis/ProgressLayers";
+import LessonHtml from "@/components/ui/LessonHtml";
+import { PlayerSkeleton } from "@/components/ui/Skeleton";
+import LessonNotes from "@/components/notes/LessonNotes";
+import LessonRevisionSheet from "@/components/revision/LessonRevisionSheet";
 
 type LessonFull = Lesson & { content_blocks: ContentBlock[] };
 type ModuleFull = Module & { lessons: LessonFull[] };
@@ -29,6 +33,7 @@ export default function PlayerClient({
   missions = [],
   skills = [],
   initialSkillCount = 0,
+  initialLessonId = null,
 }: {
   course: Course;
   modules: ModuleFull[];
@@ -37,15 +42,20 @@ export default function PlayerClient({
   missions?: CourseMission[];
   skills?: SkillDefinition[];
   initialSkillCount?: number;
+  initialLessonId?: string | null;
 }) {
+  const firstLesson = modules[0]?.lessons?.[0] || null;
+  const resumeLesson =
+    (initialLessonId && modules.flatMap((m) => m.lessons).find((l) => l.id === initialLessonId)) || firstLesson;
   const [progress, setProgress] = useState(initialProgress);
-  const [activeLesson, setActiveLesson] = useState<LessonFull | null>(
-    modules[0]?.lessons?.[0] || null
-  );
+  const [activeLesson, setActiveLesson] = useState<LessonFull | null>(resumeLesson);
   const [activeBlocks, setActiveBlocks] = useState<ContentBlock[]>([]);
-  const [blocksLoading, setBlocksLoading] = useState(Boolean(modules[0]?.lessons?.[0]));
+  const [blocksLoading, setBlocksLoading] = useState(Boolean(resumeLesson));
+  const [blocksError, setBlocksError] = useState<string | null>(null);
   const [completing, setCompleting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [sqlSuccess, setSqlSuccess] = useState<Record<string, boolean>>({});
   const [skillCount, setSkillCount] = useState(initialSkillCount);
   const blockCache = useRef<Record<string, ContentBlock[]>>({});
@@ -85,14 +95,20 @@ export default function PlayerClient({
     }
     let cancelled = false;
     setBlocksLoading(true);
+    setBlocksError(null);
     setActiveBlocks([]);
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("content_blocks")
         .select("*")
         .eq("lesson_id", activeLessonId)
         .order("position");
       if (cancelled) return;
+      if (error) {
+        setBlocksError("Impossible de charger le contenu de la leçon. Vérifiez votre connexion et réessayez.");
+        setBlocksLoading(false);
+        return;
+      }
       const blocks = data || [];
       blockCache.current[activeLessonId] = blocks;
       setActiveBlocks(blocks);
@@ -248,7 +264,7 @@ export default function PlayerClient({
     !practical;
 
   return (
-    <div className="player-layout">
+    <div className={`player-layout${notesOpen ? " notes-open" : ""}`}>
       <button
         className="player-sidebar-toggle"
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -308,7 +324,19 @@ export default function PlayerClient({
       <div className="player-content">
         {activeLesson ? (
           <div>
-            <h2 className="player-lesson-title">{activeLesson.title}</h2>
+            <div className="player-lesson-head">
+              <h2 className="player-lesson-title">{activeLesson.title}</h2>
+              {!isPreview && (
+                <div className="player-tools">
+                  <button type="button" className="secondary-btn" onClick={() => setNotesOpen((v) => !v)}>
+                    <i className="fas fa-sticky-note" /> Mes notes
+                  </button>
+                  <button type="button" className="secondary-btn" onClick={() => setSheetOpen(true)}>
+                    <i className="fas fa-file-alt" /> Fiche de révision
+                  </button>
+                </div>
+              )}
+            </div>
             {(() => {
               const courseMission = missions.find((m) => !m.module_id);
               const moduleMission = missions.find((m) => m.module_id === activeLesson.module_id);
@@ -355,10 +383,11 @@ export default function PlayerClient({
               </div>
             </div>
 
-            {blocksLoading && (
-              <div className="player-card" style={{ background: "var(--bg-card)", borderRadius: "var(--radius)", padding: 32, boxShadow: "var(--shadow)", marginBottom: 24, textAlign: "center", color: "var(--text-light)" }}>
-                Chargement de la leçon…
-              </div>
+            {blocksLoading && <PlayerSkeleton />}
+            {blocksError && (
+              <p className="form-error" role="alert">
+                {blocksError}
+              </p>
             )}
 
             {!blocksLoading && displayBlocks.length > 0 && (
@@ -366,19 +395,17 @@ export default function PlayerClient({
                 {displayBlocks.map((block) => (
                   <div key={block.id} style={{ marginBottom: 20 }}>
                     {block.block_type === "heading" && (
-                      <h3 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 8 }}>{block.content}</h3>
+                      <h3 className="lesson-heading">{block.content}</h3>
                     )}
-                    {block.block_type === "text" && (
-                      <p style={{ lineHeight: 1.8, color: "var(--text)", whiteSpace: "pre-wrap" }}>{block.content}</p>
-                    )}
+                    {block.block_type === "text" && <LessonHtml content={block.content} />}
                     {block.block_type === "callout" && (
-                      <div style={{ padding: "16px 20px", background: "#eff6ff", borderLeft: "4px solid var(--primary)", borderRadius: 8, lineHeight: 1.6 }}>
-                        <i className="fas fa-lightbulb" style={{ color: "var(--primary)", marginRight: 8 }} />
-                        {block.content}
+                      <div className="lesson-callout">
+                        <i className="fas fa-lightbulb" aria-hidden="true" />
+                        <LessonHtml content={block.content} />
                       </div>
                     )}
                     {block.block_type === "code" && (
-                      <pre style={{ padding: 16, background: "#1e293b", color: "#e2e8f0", borderRadius: 8, overflow: "auto", fontSize: "0.85rem", lineHeight: 1.6 }}>
+                      <pre className="lesson-pre">
                         <code>{block.content}</code>
                       </pre>
                     )}
@@ -481,7 +508,7 @@ export default function PlayerClient({
                     display: "inline-flex", alignItems: "center", gap: 8,
                   }}
                 >
-                  <i className="fas fa-check" /> Terminer la leçon
+                  {completing ? <i className="fas fa-spinner fa-spin" /> : <i className="fas fa-check" />} Terminer la leçon
                 </button>
               )}
 
@@ -499,7 +526,7 @@ export default function PlayerClient({
                     opacity: sqlSuccess[activeLesson.id] ? 1 : 0.5,
                   }}
                 >
-                  <i className="fas fa-check" /> Terminer la leçon
+                  {completing ? <i className="fas fa-spinner fa-spin" /> : <i className="fas fa-check" />} Terminer la leçon
                 </button>
               )}
 
@@ -526,8 +553,31 @@ export default function PlayerClient({
         )}
       </div>
 
+      {!isPreview && activeLesson && (
+        <LessonNotes
+          courseId={course.id}
+          courseTitle={course.title}
+          lessonId={activeLesson.id}
+          lessonTitle={activeLesson.title}
+          open={notesOpen}
+          onClose={() => setNotesOpen(false)}
+        />
+      )}
+
+      {!isPreview && activeLesson && (
+        <LessonRevisionSheet
+          courseId={course.id}
+          courseTitle={course.title}
+          lessonId={activeLesson.id}
+          lessonTitle={activeLesson.title}
+          open={sheetOpen}
+          onClose={() => setSheetOpen(false)}
+        />
+      )}
+
       {!isPreview && (
         <AiTutor
+          courseId={course.id}
           courseTitle={course.title}
           lessonTitle={activeLesson?.title || ""}
           lessonContent={activeBlocks.map((b) => b.content).join("\n") || ""}

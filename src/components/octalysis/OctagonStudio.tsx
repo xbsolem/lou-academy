@@ -42,8 +42,9 @@ export default function OctagonStudio({
         ))}
       </div>
       <p className="muted" style={{ marginTop: 16 }}>
-        Total indicatif : {score.total}/80. Les axes « rareté » et « pression » restent à 0 volontairement
-        (pas de compte à rebours fictif, pas de séries culpabilisantes). Un score élevé ne signifie pas que
+        Total indicatif : {score.total}/80. P5 (partage volontaire) : opt-in uniquement, pas de classement
+        public. P6 (rareté) et pression restent à 0 volontairement — ces leviers ne sont pas construits
+        (pas de places limitées fictives, pas de compte à rebours). Un score élevé ne signifie pas que
         l&apos;apprenant a appris.
       </p>
     </div>

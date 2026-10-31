@@ -6,6 +6,7 @@ import LearningModePicker from "@/components/learning/LearningModePicker";
 import { loadLearnerJourney } from "@/lib/octalysis/load-learner";
 import PortfolioSection from "@/components/octalysis/PortfolioSection";
 import RevisionToggle from "@/components/octalysis/RevisionToggle";
+import { loadRevisionLibrary } from "@/lib/revisions/load";
 
 function asCourse(raw: unknown) {
   const row = Array.isArray(raw) ? raw[0] : raw;
@@ -25,7 +26,7 @@ export default async function EspacePage() {
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   if (!profile) redirect("/login");
 
-  const [{ data: enrollments }, { data: certificates }, { data: profilEvent }, journey] = await Promise.all([
+  const [{ data: enrollments }, { data: certificates }, { data: profilEvent }, journey, library] = await Promise.all([
     supabase
       .from("enrollments")
       .select("status, progress_percent, last_activity_at, courses(id, title, estimated_duration_minutes, category)")
@@ -41,6 +42,7 @@ export default async function EspacePage() {
       .limit(1)
       .maybeSingle(),
     loadLearnerJourney(user.id),
+    loadRevisionLibrary(user.id),
   ]);
 
   const meta = (profilEvent?.metadata || {}) as {
@@ -109,6 +111,8 @@ export default async function EspacePage() {
             ...journey.inProgress.map((c) => ({ id: c.course.id, title: c.course.title, status: c.status, progress: c.progress })),
           ]}
           targetRole={targetRole}
+          notes={library.items.filter((i) => i.kind === "note")}
+          sheets={library.items.filter((i) => i.kind === "sheet")}
         />
       </div>
 

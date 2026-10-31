@@ -33,6 +33,7 @@ export function buildLearnerNotifications(args: {
   enrollments: EnrollmentRow[];
   publishedCourses: CourseRow[];
   hasCareerProfile: boolean;
+  revisionReminders?: boolean;
 }): AppNotification[] {
   const items: AppNotification[] = [];
   const enrolledIds = new Set<string>();
@@ -64,6 +65,17 @@ export function buildLearnerNotifications(args: {
       body: `${course.title}${course.category ? ` (${course.category})` : ""}. Utile si vous visez un autre métier ou un complément de compétences.`,
       href: `/catalogue?q=${encodeURIComponent(course.title)}`,
       kind: "suggest",
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  if (args.revisionReminders) {
+    items.push({
+      id: "revision-optin",
+      title: "Révisions proposées",
+      body: "Vous avez activé les rappels : vos notes et fiches sont dans Mes révisions. Aucune obligation de les ouvrir.",
+      href: "/mes-revisions",
+      kind: "system",
       createdAt: new Date().toISOString(),
     });
   }

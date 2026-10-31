@@ -8,10 +8,12 @@ interface Message {
 }
 
 export default function AiTutor({
+  courseId,
   courseTitle,
   lessonTitle,
   lessonContent,
 }: {
+  courseId: string;
   courseTitle: string;
   lessonTitle: string;
   lessonContent: string;
@@ -39,6 +41,7 @@ export default function AiTutor({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "tutor",
+          courseId,
           courseTitle,
           lessonTitle,
           lessonContent: lessonContent.substring(0, 3000),

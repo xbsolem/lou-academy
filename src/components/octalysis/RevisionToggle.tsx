@@ -30,6 +30,7 @@ export default function RevisionToggle({
         plus faible. Aucune série à conserver, aucun message de culpabilité.
       </p>
       <button type="button" onClick={toggle} disabled={busy} className={on ? "primary-btn" : "secondary-btn"}>
+        {busy && <i className="fas fa-spinner fa-spin" />}
         {on ? "Rappels activés" : "Activer les rappels (facultatif)"}
       </button>
     </div>

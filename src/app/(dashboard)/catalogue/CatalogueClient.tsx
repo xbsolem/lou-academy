@@ -20,6 +20,7 @@ export default function CatalogueClient({
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState(initialQuery);
   const [enrolling, setEnrolling] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
 
@@ -35,16 +36,27 @@ export default function CatalogueClient({
   });
 
   const handleEnroll = async (courseId: string) => {
+    if (enrolling) return;
     setEnrolling(courseId);
+    setError(null);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setError("Vous devez être connecté pour vous inscrire.");
+      setEnrolling(null);
+      return;
+    }
 
-    await supabase.from("enrollments").upsert({
+    const { error: enrollError } = await supabase.from("enrollments").upsert({
       user_id: user.id,
       course_id: courseId,
       status: "enrolled",
       progress_percent: 0,
     }, { onConflict: "user_id,course_id" });
+    if (enrollError) {
+      setError("L'inscription n'a pas abouti. Réessayez dans un instant.");
+      setEnrolling(null);
+      return;
+    }
 
     await supabase.from("activity_events").insert({
       user_id: user.id,
@@ -64,6 +76,12 @@ export default function CatalogueClient({
       <p style={{ color: "var(--text-light)", marginBottom: 24, fontSize: "0.95rem" }}>
         {courses.length} formations disponibles
       </p>
+
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
 
       {query && (
         <p style={{ marginBottom: 16, fontSize: "0.9rem", color: "var(--text-light)" }}>
@@ -152,7 +170,7 @@ export default function CatalogueClient({
                       disabled={enrolling === course.id}
                       style={{ padding: "6px 16px", borderRadius: "var(--radius-sm)", border: "none", background: "var(--primary)", color: "#fff", cursor: enrolling === course.id ? "not-allowed" : "pointer", fontSize: "0.8rem", fontWeight: 500, fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6, opacity: enrolling === course.id ? 0.7 : 1 }}
                     >
-                      <i className="fas fa-plus" /> {enrolling === course.id ? "Inscription..." : "S'inscrire"}
+                      {enrolling === course.id ? <i className="fas fa-spinner fa-spin" /> : <i className="fas fa-plus" />} {enrolling === course.id ? "Inscription…" : "S'inscrire"}
                     </button>
                   )}
                 </div>

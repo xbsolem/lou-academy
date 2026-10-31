@@ -43,6 +43,7 @@ export default function AiWizard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "generate_curriculum",
+          courseId,
           subject, audience, level, durationHours: durationH, objectives, instructions,
         }),
       });

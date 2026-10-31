@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BadgeRow, SkillRow } from "@/lib/octalysis/load-learner";
+import type { RevisionLibraryItem } from "@/lib/revisions/types";
 import SkillList from "./SkillList";
 import ShareOptIn from "./ShareOptIn";
 
@@ -9,6 +10,8 @@ export default function PortfolioSection({
   cases,
   courses,
   targetRole,
+  notes = [],
+  sheets = [],
   suggestionsHref = "/suggestions",
 }: {
   skills: SkillRow[];
@@ -16,14 +19,16 @@ export default function PortfolioSection({
   cases: { title: string; href: string; detail: string }[];
   courses: { id: string; title: string; status: string; progress: number }[];
   targetRole: string;
+  notes?: RevisionLibraryItem[];
+  sheets?: RevisionLibraryItem[];
   suggestionsHref?: string;
 }) {
   return (
     <section className="portfolio-section">
       <h2>Portefeuille de compétences</h2>
       <p className="muted" style={{ marginBottom: 20 }}>
-        Construction progressive : compétences validées, réalisations, cas terminés et formations.
-        Les notes et fiches de révision pourront s&apos;y ajouter lorsqu&apos;elles seront disponibles.
+        Construction progressive : compétences validées, réalisations, cas terminés, formations,
+        notes et fiches de révision. Rien de tout cela ne bloque une leçon.
       </p>
 
       {targetRole && (
@@ -97,15 +102,40 @@ export default function PortfolioSection({
         </div>
         <div className="journey-block">
           <h3>Fiches de révision</h3>
-          <p className="muted">
-            Aucune fiche pour l&apos;instant. Cet espace est prêt à les accueillir sans bloquer le reste du portefeuille.
-          </p>
+          {sheets.length === 0 ? (
+            <p className="muted">
+              Aucune fiche pour l&apos;instant. Générez-en une depuis une leçon : cela reste facultatif.
+            </p>
+          ) : (
+            <ul className="challenge-list">
+              {sheets.slice(0, 6).map((s) => (
+                <li key={s.id}>
+                  <Link href="/mes-revisions">{s.title}</Link>
+                  <p className="muted">{s.courseTitle} · {s.lessonTitle}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+          <Link href="/mes-revisions" className="inline-link">
+            Voir Mes révisions
+          </Link>
         </div>
         <div className="journey-block">
           <h3>Notes personnelles</h3>
-          <p className="muted">
-            Aucune note pour l&apos;instant. Les notes pourront être rattachées ici plus tard.
-          </p>
+          {notes.length === 0 ? (
+            <p className="muted">
+              Aucune note pour l&apos;instant. Elles restent privées et n&apos;empêchent pas d&apos;avancer.
+            </p>
+          ) : (
+            <ul className="challenge-list">
+              {notes.slice(0, 6).map((n) => (
+                <li key={n.id}>
+                  <Link href="/mes-revisions">{n.title}</Link>
+                  <p className="muted">{n.courseTitle} · {n.lessonTitle}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </section>

@@ -1,53 +1,15 @@
 import { NextResponse } from "next/server";
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o";
-
-async function callAI(systemPrompt: string, userPrompt: string) {
-  if (!OPENAI_API_KEY) {
-    return { error: "Le fournisseur IA n'est pas encore configure. Ajoutez OPENAI_API_KEY dans .env.local" };
-  }
-
-  const res = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: OPENAI_MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-    }),
-  });
-
-  if (!res.ok) {
-    const errorBody = await res.text();
-    return { error: `Erreur API IA: ${res.status} - ${errorBody}` };
-  }
-
-  const data = await res.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) return { error: "Reponse IA vide" };
-
-  try {
-    return { result: JSON.parse(content) };
-  } catch {
-    return { error: "Reponse IA non valide (JSON attendu)" };
-  }
-}
+import { completeChat, completeJson } from "@/lib/ai/openai";
+import { requireAiContext } from "@/lib/ai/guard";
+import { generateRevisionSheet } from "@/lib/revision/generate";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { action } = body;
+    const gated = await requireAiContext({ action: body.action, courseId: body.courseId });
+    if (!gated.ok) return gated.response;
 
-    if (action === "generate_curriculum") {
+    if (gated.action === "generate_curriculum") {
       const { subject, audience, level, durationHours, objectives, instructions } = body;
 
       const system = `Tu es un concepteur pedagogique expert. Tu crees des programmes de formation structures.
@@ -77,12 +39,12 @@ Duree souhaitee: ${durationHours} heures
 Objectifs: ${objectives || "Non precises"}
 Instructions: ${instructions || "Aucune"}`;
 
-      const result = await callAI(system, user);
-      if (result.error) return NextResponse.json({ error: result.error }, { status: 500 });
+      const result = await completeJson(system, user);
+      if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
       return NextResponse.json({ curriculum: result.result });
     }
 
-    if (action === "lesson_content") {
+    if (gated.action === "lesson_content") {
       const { lessonTitle, aiAction, existingContent } = body;
 
       const actionPrompts: Record<string, string> = {
@@ -105,15 +67,14 @@ Utilise heading pour les titres, text pour les paragraphes, callout pour les poi
 La langue du contenu doit etre le francais.`;
 
       const user = actionPrompts[aiAction] || `Genere du contenu pour: ${lessonTitle}`;
-
-      const result = await callAI(system, user);
-      if (result.error) return NextResponse.json({ error: result.error }, { status: 500 });
-      return NextResponse.json({ blocks: result.result?.blocks || [] });
+      const result = await completeJson(system, user);
+      if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
+      const parsed = result.result as { blocks?: unknown };
+      return NextResponse.json({ blocks: parsed?.blocks || [] });
     }
 
-    if (action === "tutor") {
+    if (gated.action === "tutor") {
       const { courseTitle, lessonTitle, lessonContent, question, history } = body;
-
       const system = `Tu es un tuteur pedagogique bienveillant pour la plateforme LOU Academy.
 Tu aides les apprenants a comprendre les concepts sans donner directement la reponse.
 Tu privilegies: 1) l'explication, 2) les indices, 3) les pistes, 4) les exemples differents.
@@ -121,39 +82,44 @@ Tu es patient, encourageant et precis.
 Contexte actuel:
 - Formation: ${courseTitle || "Non precisee"}
 - Lecon: ${lessonTitle || "Non precisee"}
-- Contenu de la lecon: ${lessonContent ? lessonContent.substring(0, 2000) : "Non disponible"}
+- Contenu de la lecon: ${lessonContent ? String(lessonContent).substring(0, 2000) : "Non disponible"}
 Reponds en francais.`;
 
       const messagesForAi = [
         { role: "system" as const, content: system },
-        ...(history || []).map((m: { role: string; content: string }) => ({
-          role: m.role as "user" | "assistant",
+        ...((history || []) as { role: string; content: string }[]).map((m) => ({
+          role: (m.role === "assistant" ? "assistant" : "user") as "user" | "assistant",
           content: m.content,
         })),
-        { role: "user" as const, content: question },
+        { role: "user" as const, content: String(question || "") },
       ];
 
-      if (!OPENAI_API_KEY) {
-        return NextResponse.json({ error: "Le fournisseur IA n'est pas encore configure." });
-      }
-
-      const res = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${OPENAI_API_KEY}` },
-        body: JSON.stringify({ model: OPENAI_MODEL, messages: messagesForAi, temperature: 0.7, max_tokens: 1000 }),
-      });
-
-      if (!res.ok) {
-        return NextResponse.json({ error: `Erreur API IA: ${res.status}` }, { status: 500 });
-      }
-
-      const data = await res.json();
-      return NextResponse.json({ response: data.choices?.[0]?.message?.content || "..." });
+      const result = await completeChat(messagesForAi);
+      if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
+      return NextResponse.json({ response: result.response });
     }
 
-    return NextResponse.json({ error: "Action inconnue" }, { status: 400 });
+    if (gated.action === "revision_sheet") {
+      const generated = await generateRevisionSheet({
+        supabase: gated.supabase,
+        userId: gated.userId,
+        courseId: String(body.courseId || ""),
+        lessonId: String(body.lessonId || ""),
+        regenerate: Boolean(body.regenerate),
+      });
+      if ("error" in generated) {
+        return NextResponse.json({ error: generated.error }, { status: generated.status });
+      }
+      return NextResponse.json(generated);
+    }
+
+    return NextResponse.json({ error: "Action inconnue." }, { status: 400 });
   } catch (err) {
     console.error("AI API error:", err);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur. Réessayez dans un instant." }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return NextResponse.json({ error: "Méthode non autorisée." }, { status: 405 });
 }

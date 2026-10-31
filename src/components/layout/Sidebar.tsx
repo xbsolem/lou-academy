@@ -10,6 +10,7 @@ const menuItems = [
   { path: "/espace", icon: "fa-user-circle", label: "Mon espace" },
   { path: "/catalogue", icon: "fa-book-open", label: "Catalogue" },
   { path: "/mes-formations", icon: "fa-play-circle", label: "Mes formations" },
+  { path: "/mes-revisions", icon: "fa-book", label: "Mes révisions" },
   { path: "/suggestions", icon: "fa-lightbulb", label: "Suggestions" },
   { path: "/studio", icon: "fa-plus-circle", label: "Course Studio", roles: ["admin", "creator"] },
   { path: "/apprenants", icon: "fa-users", label: "Apprenants", roles: ["admin"] },

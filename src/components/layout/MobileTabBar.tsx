@@ -12,6 +12,7 @@ export default function MobileTabBar({ profile }: { profile: Profile }) {
         { href: "/", icon: "fa-home", label: "Accueil" },
         { href: "/catalogue", icon: "fa-book-open", label: "Catalogue" },
         { href: "/mes-formations", icon: "fa-play-circle", label: "Formations" },
+        { href: "/mes-revisions", icon: "fa-book", label: "Révisions" },
         { href: "/espace", icon: "fa-user-circle", label: "Espace" },
       ]
     : [

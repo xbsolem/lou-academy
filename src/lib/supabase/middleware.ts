@@ -44,6 +44,7 @@ export async function updateSession(request: NextRequest) {
   const isResetPasswordPage = pathname.startsWith("/reset-password");
   const isAuthPage = isLoginPage || isResetPasswordPage;
   const isAuthCallback = pathname.startsWith("/auth/callback");
+  const isApi = pathname.startsWith("/api/");
   const code = request.nextUrl.searchParams.get("code");
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const recovery = isRecoveryIntent(request);
@@ -67,7 +68,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (!user && !isAuthPage && !isAuthCallback) {
+  if (!user && !isAuthPage && !isAuthCallback && !isApi) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

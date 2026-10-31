@@ -73,6 +73,7 @@ export default function Topbar({
           enrollments: enrollments || [],
           publishedCourses: published.data || [],
           hasCareerProfile: hasCareer,
+          revisionReminders: Boolean(profile.revision_reminders),
         });
         if (!cancelled) setNotifications(list);
       } else {
